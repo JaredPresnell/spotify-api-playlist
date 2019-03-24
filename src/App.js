@@ -55,9 +55,55 @@ class App extends Component {
         return response;
       });  
   }
+  // componentDidMount() {
+  //   this.callApi()
+  //     .then(res => this.setState({ response: res.express }))
+  //     .catch(err => console.log(err));
+  // }
+
   componentDidMount(){
+    var testObj = {};
     this.props.getHashParams();
+    // this.callApi()
+    //   .then(res =>console.log(res));
+
+     fetch('/api/world',{
+        method: 'POST',
+        body: JSON.stringify({
+          post: 'yoooo my guy'
+        }),
+        headers: {"Content-Type": "application/json"}
+      })
+      .then(function(body){
+        console.log(body.text());
+      });
+
+      fetch('/api/testing',{
+        method: 'POST',
+        body: JSON.stringify({
+          post: 'here we are testing again'
+        }),
+        headers: {"Content-Type": "application/json"}
+      })
+      .then(function(body){
+        console.log(body.text());
+      });
+
+      fetch('/api/spotify')
+      .then(function(res){
+        return res.json();
+      })
+      .then(function(resJSON){
+        console.log(resJSON)
+      });
+
   }
+  callApi = async () => {
+    const response = await fetch('/api/hello');
+    const body = await response.json();
+    if (response.status !== 200) throw Error(body.message);
+    return body;
+  };
   constructor() {
     super();
   }

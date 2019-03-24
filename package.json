@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "mongodb": "^3.1.13",
+    "mongoose": "^5.4.19",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.7",
@@ -11,12 +15,17 @@
     "spotify-web-api-js": "^1.2.0"
   },
   "devDependencies": {
-    "react-scripts": "1.1.1"
+    "react-scripts": "1.1.1",
+    "concurrently": "^4.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  }
+    "eject": "react-scripts eject",
+    "client": "cd src && npm start",
+    "server": "node server.js",
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\" \"cd .. && cd spotify_auth && cd authorization_code && node app.js\""
+  },
+  "proxy": "http://localhost:5000/"
 }
