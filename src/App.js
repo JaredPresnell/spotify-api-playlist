@@ -4,14 +4,17 @@ import Spotify from 'spotify-web-api-js';
 
 import './App.css';
 
-import { setTracks } from './actions/setTracks';
-import { getHashParams } from './actions/getHashParams';
-import { incrementCount } from './actions/incrementCount';
-import { decrementCount } from './actions/decrementCount';
-import { toggleTimeFrame } from './actions/toggleTimeFrame';
+import { setTracks }        from './actions/setTracks';
+import { getHashParams }    from './actions/getHashParams';
+import { incrementCount }   from './actions/incrementCount';
+import { decrementCount }   from './actions/decrementCount';
+import { toggleTimeFrame }  from './actions/toggleTimeFrame';
+import { getUsers }         from './actions/getUsers';
+import { addUser }          from './actions/addUser';
 
 // COMPONENTS
 import TopSongs from './Components/TopSongs'; 
+import Users from './Components/Users';
 
 const spotifyApi = new Spotify();
 
@@ -23,7 +26,9 @@ const mapDispatchToProps = dispatch => ({
   getHashParams: () => dispatch(getHashParams()),
   incrementCount: () => dispatch(incrementCount()),
   decrementCount: () => dispatch(decrementCount()),
-  toggleTimeFrame: () => dispatch(toggleTimeFrame())
+  toggleTimeFrame: () => dispatch(toggleTimeFrame()),
+  getUsers:        () => dispatch(getUsers()),
+  addUser:         (name,token) => dispatch(addUser(name,token)),
 })
 
 /* 
@@ -55,55 +60,23 @@ class App extends Component {
         return response;
       });  
   }
-  // componentDidMount() {
-  //   this.callApi()
-  //     .then(res => this.setState({ response: res.express }))
-  //     .catch(err => console.log(err));
-  // }
+
 
   componentDidMount(){
     var testObj = {};
     this.props.getHashParams();
-    // this.callApi()
-    //   .then(res =>console.log(res));
 
-     fetch('/api/world',{
-        method: 'POST',
-        body: JSON.stringify({
-          post: 'yoooo my guy'
-        }),
-        headers: {"Content-Type": "application/json"}
-      })
-      .then(function(body){
-        console.log(body.text());
-      });
-
-      fetch('/api/testing',{
-        method: 'POST',
-        body: JSON.stringify({
-          post: 'here we are testing again'
-        }),
-        headers: {"Content-Type": "application/json"}
-      })
-      .then(function(body){
-        console.log(body.text());
-      });
-
-      fetch('/api/spotify')
+      fetch('/api/getusers')
       .then(function(res){
         return res.json();
       })
       .then(function(resJSON){
-        console.log(resJSON)
+        //you should probably just load in everything from the server here
+        //console.log(resJSON)
       });
 
   }
-  callApi = async () => {
-    const response = await fetch('/api/hello');
-    const body = await response.json();
-    if (response.status !== 200) throw Error(body.message);
-    return body;
-  };
+
   constructor() {
     super();
   }
@@ -130,6 +103,11 @@ class App extends Component {
           incrementCount = {this.props.incrementCount}
           decrementCount = {this.props.decrementCount}
           toggleTimeFrame = {this.props.toggleTimeFrame }
+        />
+        <Users
+          getUsers = {this.props.getUsers}
+          users = {this.props.users}
+          addUser = {this.props.addUser}
         />
       </div>
     );
