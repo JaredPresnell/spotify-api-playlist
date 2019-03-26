@@ -1,16 +1,12 @@
-export const addUser = (name,token) => dispatch => {
+export const addUser = (name,accessToken, refreshToken) => dispatch => {
 	//mongo post to database, return users once youre done
-	var userName = name;
-	var userToken = token;
+  //console.log('refresh token from addusers.js ' + refreshToken);
 	fetch('/api/adduser',{
         method: 'POST',
-        // body: JSON.stringify({
-        //   name: name,
-        //   token: token
-        // }),
         body: JSON.stringify({
-        	name: userName,
-        	token: userToken
+        	name: name,
+        	accessToken: accessToken,
+          refreshToken: refreshToken
         }),
         headers: {
         	"Content-Type": "application/json"
@@ -23,9 +19,9 @@ export const addUser = (name,token) => dispatch => {
       	//console.log(resJSON);
       	var users = resJSON;
       	dispatch({
-			type: 'ADD_USER',
-			payload: users
-		});
+    			type: 'ADD_USER',
+    			payload: users
+    		});
        
       });
 	

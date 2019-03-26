@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Spotify from 'spotify-web-api-js';
+//import SpotifyWebApi from 'spotify-web-api-node';
 
 import './App.css';
 
@@ -11,10 +12,12 @@ import { decrementCount }   from './actions/decrementCount';
 import { toggleTimeFrame }  from './actions/toggleTimeFrame';
 import { getUsers }         from './actions/getUsers';
 import { addUser }          from './actions/addUser';
+import { getNewToken }      from './actions/getNewToken';
 
 // COMPONENTS
 import TopSongs from './Components/TopSongs'; 
 import Users from './Components/Users';
+
 
 const spotifyApi = new Spotify();
 
@@ -28,7 +31,8 @@ const mapDispatchToProps = dispatch => ({
   decrementCount: () => dispatch(decrementCount()),
   toggleTimeFrame: () => dispatch(toggleTimeFrame()),
   getUsers:        () => dispatch(getUsers()),
-  addUser:         (name,token) => dispatch(addUser(name,token)),
+  addUser:         (name,accessToken, refreshToken) => dispatch(addUser(name,accessToken, refreshToken)),
+  getNewToken:    (refreshToken) => dispatch(getNewToken(refreshToken)),
 })
 
 /* 
@@ -81,11 +85,21 @@ class App extends Component {
     super();
   }
   render() {  
-    if(this.props.hashParams.access_token){
-      spotifyApi.setAccessToken(this.props.hashParams.access_token);
+    if(this.props.users[0].accessToken){
+      //console.log('setting access token');
+      spotifyApi.setAccessToken(this.props.users[0].accessToken);
+      //console.log(spotifyApi.getAccessToken());
     }
+    var userRefreshToken = '';
+    if(this.props.users[0].refreshToken !== '') userRefreshToken = this.props.users[0].refreshToken;
     return (
       <div className="App">
+        <button onClick = {() => this.props.getNewToken(userRefreshToken)}>
+        GET REFRESH TOKEN</button>
+
+        <a href="http://localhost:8888/refresh_token">
+          <button>Spotify!</button>
+        </a>
         <h1>Spotify Playlist API</h1>
         <a href="http://localhost:8888">
           <button>Log in to Spotify!</button>
@@ -108,6 +122,7 @@ class App extends Component {
           getUsers = {this.props.getUsers}
           users = {this.props.users}
           addUser = {this.props.addUser}
+          hashParams = {this.props.hashParams}
         />
       </div>
     );

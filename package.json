@@ -12,7 +12,8 @@
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
-    "spotify-web-api-js": "^1.2.0"
+    "spotify-web-api-js": "^1.2.0",
+    "spotify-web-api-node": "^4.0.0"
   },
   "devDependencies": {
     "react-scripts": "1.1.1",

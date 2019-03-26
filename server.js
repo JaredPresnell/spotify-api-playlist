@@ -29,13 +29,26 @@ app.get('/api/getusers', (req, res) => {
 	});	
 });
 
+app.post('/api/edituser',(req, res) => {
+	mongo.connect(uri, function(err, client){
+		var db = client.db('spotify');
+		var collection = db.collection('users');
+		collection.updateOne(
+			{refreshToken: req.body.refreshToken},
+			{'$set': {'accessToken':req.body.accessToken}}, 
+			(err, item) => {console.log(item)
+		});
+	});
+});
 app.post('/api/adduser', (req, res) => {
   console.log(req.body);
   var resultArray = [];
 	mongo.connect(uri, function(err, client){
 		var db = client.db('spotify');
 		var cursor = db.collection('users').find();	
-		db.collection('users').insert({name: req.body.name, token: req.body.token});
+		console.log(req.body.accessToken);
+		console.log(req.body.refreshToken);
+		db.collection('users').insert({name: req.body.name, accessToken: req.body.accessToken, refreshToken: req.body.refreshToken});
 		cursor.forEach(function(doc, err){
 			resultArray.push(doc);
 		}, function(){
