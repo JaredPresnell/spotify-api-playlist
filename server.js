@@ -38,7 +38,18 @@ app.post('/api/edituser',(req, res) => {
 			{'$set': {'accessToken':req.body.accessToken}}, 
 			(err, item) => {console.log(item)
 		});
+		//this doesnt really make any sense but i was getting json errors and whatever
+		var updatedUsers = [];
+		var updatedUsersCursor = collection.find({refreshToken: req.body.refreshToken});
+		updatedUsersCursor.forEach(function(doc,err){
+			updatedUsers.push(doc);
+		}, function(){
+			client.close();
+			res.json(updatedUsers[0]);
+		});
 	});
+	
+
 });
 app.post('/api/adduser', (req, res) => {
   console.log(req.body);

@@ -22,6 +22,7 @@ export default class TopSongs extends Component {
             this.props.tracks.map((item, i) => <li key={i}>{item.name}, {item.artists[0].name}</li> )
           }   
         </ul>
+        <button onClick = {() => this.props.pushTracks(this.props.tracks)}>SEND TRACKS TO SPOTIFY!</button>
       </div>
     )
   } 

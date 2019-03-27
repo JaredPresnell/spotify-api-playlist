@@ -12,15 +12,16 @@ import { decrementCount }   from './actions/decrementCount';
 import { toggleTimeFrame }  from './actions/toggleTimeFrame';
 import { getUsers }         from './actions/getUsers';
 import { addUser }          from './actions/addUser';
-import { getNewToken }      from './actions/getNewToken';
+import { getNewToken }      from './actions/getNewToken'; //this is obsolete
+import { editUser }         from './actions/editUser';
 
 // COMPONENTS
 import TopSongs from './Components/TopSongs'; 
 import Users from './Components/Users';
-
+import TokenManager from './Components/TokenManager';
 
 const spotifyApi = new Spotify();
-
+const playlist_id = '674PhRT9Knua4GdUkgzTel';
 /* 
  * mapDispatchToProps
 */
@@ -33,6 +34,7 @@ const mapDispatchToProps = dispatch => ({
   getUsers:        () => dispatch(getUsers()),
   addUser:         (name,accessToken, refreshToken) => dispatch(addUser(name,accessToken, refreshToken)),
   getNewToken:    (refreshToken) => dispatch(getNewToken(refreshToken)),
+  editUser: (name, refreshToken, accessToken) => dispatch(editUser(name, accessToken, refreshToken)),
 })
 
 /* 
@@ -64,7 +66,38 @@ class App extends Component {
         return response;
       });  
   }
+  pushTracks(){
+    var tracks = this.props.tracks;
+    var trackUris = [];
+    tracks.forEach((track) => {
+      trackUris.push(track.uri);
+    })
+    console.log(trackUris);
+    console.log(spotifyApi.getAccessToken());
+    spotifyApi.addTracksToPlaylist(playlist_id, trackUris, {})
+    .then((res) =>{
+      console.log(res);
+    });
 
+
+    // var tracks = this.props.tracks;
+    // var trackUris = 'uris=';
+    // tracks.forEach((track) =>{
+    //   trackUris += 'spotify%3Atrack%3A' +track.id + ',';
+    //   //trackUris.push(track.id);
+    // });
+    // console.log(trackUris);
+    // //spotifyApi.addTracksToPlaylist(playlistUri, trackUris);
+    // var spotifyPlaylistUri = 'https://api.spotify.com/v1/playlists/'+playlist_id+'/tracks?'+trackUris;
+    // console.log(this.props.users[0].accessToken);
+    // fetch(spotifyPlaylistUri,{
+    //   method: 'POST',
+    //   headers:{
+    //     "Authorization": "Bearer BQAcvgKGnZAmUsU3kvIrzwVURfwJ5gEKbhP7v4jUvTu4Z1c7hcDFTadVGV255P8_FPyijYc3Gk2cGhf0xJ44bCz-uP2v4ToWwscuiuCjM0piyMP6MJgRfBjorkG0kJVSYE9FlVIOjhE0RFnEtFsR73EoxaIYPbemFDmKhvLYYFrZPcRLTO7hpKCFtQVSaTQQTzJZiZQFzi5yRrL-DdS1h84q" ,
+    //     "Content-Type": 'application/json'
+    //   }
+    // });
+  }
 
   componentDidMount(){
     var testObj = {};
@@ -94,12 +127,12 @@ class App extends Component {
     if(this.props.users[0].refreshToken !== '') userRefreshToken = this.props.users[0].refreshToken;
     return (
       <div className="App">
-        <button onClick = {() => this.props.getNewToken(userRefreshToken)}>
-        GET REFRESH TOKEN</button>
+        <TokenManager 
+          refreshToken = {this.props.users[0].refreshToken}
+          editUser = {this.props.editUser}
+        />
+        
 
-        <a href="http://localhost:8888/refresh_token">
-          <button>Spotify!</button>
-        </a>
         <h1>Spotify Playlist API</h1>
         <a href="http://localhost:8888">
           <button>Log in to Spotify!</button>
@@ -117,6 +150,7 @@ class App extends Component {
           incrementCount = {this.props.incrementCount}
           decrementCount = {this.props.decrementCount}
           toggleTimeFrame = {this.props.toggleTimeFrame }
+          pushTracks = {() => this.pushTracks()}
         />
         <Users
           getUsers = {this.props.getUsers}
@@ -129,4 +163,5 @@ class App extends Component {
   }
 }
 
+//connect(mapStateToProps, mapDispatchToProps)(TokenManager);
 export default connect(mapStateToProps, mapDispatchToProps)(App);
