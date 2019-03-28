@@ -4,6 +4,6 @@
 export const setTracks = (tracks) => dispatch => {
 	dispatch({
 		type: 'SET_TRACKS',
-		payload: tracks.items
+		payload: tracks
 	})
 }

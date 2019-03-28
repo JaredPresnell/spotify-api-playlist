@@ -54,17 +54,28 @@ class App extends Component {
    * @summary handles button click 
    */
   getTopTracks(){
-    //spotifyApi.getMyCurrentPlaybackState()
+    var totalTracks = [];
     const options = {limit: this.props.settings.count, offset: 0, time_range: this.props.settings.timeFrame};
-    spotifyApi.getMyTopTracks(options)    
-      .then((response)=>{
-        console.log(response);
-        // this.setState({
-        //   topTracks: response.items,
-        // });
-        this.props.setTracks(response); 
-        return response;
-      });  
+    this.props.users.forEach((user, index) => {
+      spotifyApi.setAccessToken(user.accessToken);
+      spotifyApi.getMyTopTracks(options)
+        .then((response) => {
+          console.log(response);
+          totalTracks = totalTracks.concat(response.items);
+          if(index+1==this.props.users.length)
+            console.log(totalTracks);
+            this.props.setTracks(totalTracks);
+            //need to do something about duplicates probably
+        })
+
+    })
+
+    // spotifyApi.getMyTopTracks(options)    
+    //   .then((response)=>{
+    //     console.log(response);
+    //     this.props.setTracks(response); 
+    //     return response;
+    //   });  
   }
   pushTracks(){
     var tracks = this.props.tracks;
