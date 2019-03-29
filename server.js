@@ -24,6 +24,8 @@ app.get('/api/getusers', (req, res) => {
 		}, function(){
 			client.close();
 			//console.log(resultArray);
+			if(resultArray.length ==0)
+				resultArray = [{spotifyId: '', name: '', accessToken: '', refreshToken: ''}];
 			res.json(resultArray);
 		});
 	});	
@@ -52,22 +54,54 @@ app.post('/api/edituser',(req, res) => {
 
 });
 app.post('/api/adduser', (req, res) => {
-  console.log(req.body);
-  var resultArray = [];
+  	console.log(req.body);
 	mongo.connect(uri, function(err, client){
 		var db = client.db('spotify');
 		var cursor = db.collection('users').find();	
-		console.log(req.body.accessToken);
-		console.log(req.body.refreshToken);
-		db.collection('users').insert({name: req.body.name, accessToken: req.body.accessToken, refreshToken: req.body.refreshToken});
-		cursor.forEach(function(doc, err){
-			resultArray.push(doc);
-		}, function(){
-			client.close();
-			//console.log(resultArray);
-			//res.json({users: resultArray});
-			res.json(resultArray);
-		});
+		var collection = db.collection('users');
+		collection.find({spotifyId: req.body.spotifyId}).count()
+		.then((count) =>{
+			if(count>0){
+				console.log('duplicate user found');
+				var resultsArray = [];
+				cursor.forEach(function(doc, err){
+					resultsArray.push(doc);
+				}, function(){
+					res.json(resultsArray);
+					client.close();
+				});
+			}
+			else{
+				collection.insertOne({spotifyId: req.body.spotifyId, name: req.body.name, accessToken: req.body.accessToken, refreshToken: req.body.refreshToken})
+				.then(() => {
+					cursor = db.collection('users').find();
+					var resultsArray =[];
+					cursor.forEach(function(doc, err){
+						resultsArray.push(doc);
+					}, function(){
+						res.json(resultsArray);
+						client.close();
+					});
+				
+				});
+				// , function(error, response){
+				// 	if(error){
+				// 		console.log('ERROR' + ERROR);
+				// 	}
+				// 	else {
+				// 		cursor = db.collection('users').find();
+				// 		cursor.forEach(function(doc, err){
+				// 			resultArray.push(doc);
+				// 		}, function(){
+				// 			res.json(resultArray);
+				// 			client.close();
+				// 		});
+				// 	}
+				// });
+			}
+		})
+		
+		
 	});	
 });
 

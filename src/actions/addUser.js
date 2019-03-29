@@ -1,9 +1,8 @@
-export const addUser = (name,accessToken, refreshToken) => dispatch => {
-	//mongo post to database, return users once youre done
-  //console.log('refresh token from addusers.js ' + refreshToken);
+export const addUser = (id, name,accessToken, refreshToken) => dispatch => {
 	fetch('/api/adduser',{
         method: 'POST',
         body: JSON.stringify({
+          spotifyId: id,
         	name: name,
         	accessToken: accessToken,
           refreshToken: refreshToken

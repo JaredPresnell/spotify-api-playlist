@@ -1,22 +1,20 @@
 /* 
   src/reducers/usersReducer.js
 */
-
-export default (state, action) => {
+ 
+const initialState = [{spotifyId: '', name:'',accessToken:'',refreshToken:''}];  
+export default (state = initialState, action) => {
   switch (action.type) {
     case 'GET_USERS':
       	return action.payload
     case 'ADD_USER':
     	return action.payload
     case 'EDIT_USER':
-      console.log(action.name);
-      console.log(action.accessToken);
-      console.log(action.refreshToken);
     	var newState = {...state};
 
     	//newState[0].accessToken = action.payload.access_token;
-    	return [{name:'',accessToken:'',refreshToken:''}];
+    	return state
     default:
-      	return [{name:'',accessToken:'',refreshToken:''}]
+      	return state
   }
 }

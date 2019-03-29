@@ -12,8 +12,21 @@ export const getHashParams = () => dispatch => {
 	    return hashParams;
   	}
   	var params = getParams();
+  	//i could get the params, then i could call to spotify, then i could dispatch to users
+  	console.log('PARAMS');
+  	console.log(params);
+  	if(isEmpty(params))
+  		console.log('params not null');
 	dispatch({
 		type: 'GET_HASH_PARAMS',
 		payload: params
 	})
+}
+
+function isEmpty(obj) {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
 }

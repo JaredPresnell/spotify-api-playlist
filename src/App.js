@@ -22,9 +22,7 @@ import TokenManager from './Components/TokenManager';
 
 const spotifyApi = new Spotify();
 const playlist_id = '674PhRT9Knua4GdUkgzTel';
-/* 
- * mapDispatchToProps
-*/
+
 const mapDispatchToProps = dispatch => ({
   setTracks: (tracks) => dispatch(setTracks(tracks)),
   getHashParams: () => dispatch(getHashParams()),
@@ -32,27 +30,20 @@ const mapDispatchToProps = dispatch => ({
   decrementCount: () => dispatch(decrementCount()),
   toggleTimeFrame: () => dispatch(toggleTimeFrame()),
   getUsers:        () => dispatch(getUsers()),
-  addUser:         (name,accessToken, refreshToken) => dispatch(addUser(name,accessToken, refreshToken)),
+  addUser:         (id, name,accessToken, refreshToken) => dispatch(addUser(id,name,accessToken, refreshToken)),
   getNewToken:    (refreshToken) => dispatch(getNewToken(refreshToken)),
   editUser: (name, refreshToken, accessToken) => dispatch(editUser(name, accessToken, refreshToken)),
 })
 
-/* 
- * mapStateToProps
-*/
-const mapStateToProps = state => ({
-  ...state
-})
+const mapStateToProps = state => (
+  {
+    ...state
+    // how do i shred more than this
+  }
+)
 
-/**
- * @class App
- * @extends {Component}
- */
+
 class App extends Component {
-  /**
-   * @memberof App
-   * @summary handles button click 
-   */
   getTopTracks(){
     var totalTracks = [];
     const options = {limit: this.props.settings.count, offset: 0, time_range: this.props.settings.timeFrame};
@@ -60,22 +51,13 @@ class App extends Component {
       spotifyApi.setAccessToken(user.accessToken);
       spotifyApi.getMyTopTracks(options)
         .then((response) => {
-          console.log(response);
           totalTracks = totalTracks.concat(response.items);
-          if(index+1==this.props.users.length)
-            console.log(totalTracks);
+          if(index+1===this.props.users.length)
             this.props.setTracks(totalTracks);
-            //need to do something about duplicates probably
+            //need to do something about duplicates probably  
         })
 
-    })
-
-    // spotifyApi.getMyTopTracks(options)    
-    //   .then((response)=>{
-    //     console.log(response);
-    //     this.props.setTracks(response); 
-    //     return response;
-    //   });  
+    }) 
   }
   pushTracks(){
     var tracks = this.props.tracks;
@@ -84,63 +66,124 @@ class App extends Component {
       trackUris.push(track.uri);
     })
     console.log(trackUris);
+    
+    var accessTokenJared = this.props.users[0].accessToken;
+    spotifyApi.setAccessToken(accessTokenJared);
     console.log(spotifyApi.getAccessToken());
     spotifyApi.addTracksToPlaylist(playlist_id, trackUris, {})
     .then((res) =>{
       console.log(res);
     });
-
-
-    // var tracks = this.props.tracks;
-    // var trackUris = 'uris=';
-    // tracks.forEach((track) =>{
-    //   trackUris += 'spotify%3Atrack%3A' +track.id + ',';
-    //   //trackUris.push(track.id);
-    // });
-    // console.log(trackUris);
-    // //spotifyApi.addTracksToPlaylist(playlistUri, trackUris);
-    // var spotifyPlaylistUri = 'https://api.spotify.com/v1/playlists/'+playlist_id+'/tracks?'+trackUris;
-    // console.log(this.props.users[0].accessToken);
-    // fetch(spotifyPlaylistUri,{
-    //   method: 'POST',
-    //   headers:{
-    //     "Authorization": "Bearer BQAcvgKGnZAmUsU3kvIrzwVURfwJ5gEKbhP7v4jUvTu4Z1c7hcDFTadVGV255P8_FPyijYc3Gk2cGhf0xJ44bCz-uP2v4ToWwscuiuCjM0piyMP6MJgRfBjorkG0kJVSYE9FlVIOjhE0RFnEtFsR73EoxaIYPbemFDmKhvLYYFrZPcRLTO7hpKCFtQVSaTQQTzJZiZQFzi5yRrL-DdS1h84q" ,
-    //     "Content-Type": 'application/json'
-    //   }
-    // });
   }
 
-  componentDidMount(){
-    var testObj = {};
-    this.props.getHashParams();
-
-      fetch('/api/getusers')
+  getNewAccessTokens(){
+    // function editUser(name, accessToken, refreshToken){
+    //   this.props.editUser(name, accessToken, refreshToken);
+    // }
+    this.props.users.forEach((user) =>{
+      var accessToken ='';
+      var refreshToken = user.refreshToken;
+      var name = '';
+      fetch('http://localhost:8888/refresh_token?refresh_token=' + refreshToken, {
+        method: 'GET',
+      })  
       .then(function(res){
-        return res.json();
+        return res.json ();
       })
-      .then(function(resJSON){
-        //you should probably just load in everything from the server here
-        //console.log(resJSON)
+      .then(function(response){    
+        fetch('/api/edituser',{
+          method: 'POST',
+          body: JSON.stringify({
+            accessToken: response.access_token,
+            refreshToken: refreshToken
+          }),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+        .then(function(res){
+          return res.json();
+        })
+        .then(function(resJSON){
+          console.log(resJSON);
+          name = resJSON.name;
+          console.log('name ' +name);
+          accessToken = resJSON.accessToken;
+          refreshToken = resJSON.refreshToken;
+          //editUser(resJSON.name, resJSON.accessToken, resJSON.refreshToken);
+
+         // this.editUserFunc();
+         // this.props.editUser(resJSON.name, resJSON.accessToken, resJSON.refreshToken);
+          // some redux shit that i dont understand: tldr, how do i get my redux here isntead of passing it
+        });
       });
-
+    });
   }
+  handleSignIn(){
+    function getParams() {
+      var hashParams = {};
+      var e, r = /([^&;=]+)=?([^&;]*)/g,
+          q = window.location.hash.substring(1);
+      while ( e = r.exec(q)) {
+         hashParams[e[1]] = decodeURIComponent(e[2]);
+      }
+      return hashParams;
+    }
+    var params = getParams();
+    if(!this.isEmpty(params)){
+      spotifyApi.setAccessToken(params.access_token);
+      spotifyApi.getMe().then((response) => {
+        console.log(params.refresh_token);
+        this.props.addUser(response.id, response.display_name, params.access_token, params.refresh_token);
 
+        //console.log(response.display_name);
+        //console.log(response.id);
+        //so i need to check if the user is in the database
+        //i should probably deal with mongo schema at some point
+      });
+    }
+  }
+  isEmpty(obj) {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+  }
+  componentDidMount(){
+    this.props.getHashParams();
+    this.handleSignIn();
+    //get users
+    //refresh all tokens
+    //get tracks
+    this.props.getUsers();
+    if(this.props.users[0].name !== '')
+        this.getTopTracks();
+    //i have no idea what im doing and im sad about it
+    // var promise1 = new Promise((resolve, reject) => {
+    //   //console.log(this.props.getUsers());
+    //   resolve(this.props.getUsers()); 
+    // });
+    // promise1.then((users) => {
+    //   console.log('users within componentDidMount');
+    //   console.log(users);
+    //   this.getTopTracks();
+    // });    
+  }
   constructor() {
     super();
   }
   render() {  
-    if(this.props.users[0].accessToken){
-      //console.log('setting access token');
-      spotifyApi.setAccessToken(this.props.users[0].accessToken);
-      //console.log(spotifyApi.getAccessToken());
-    }
-    var userRefreshToken = '';
-    if(this.props.users[0].refreshToken !== '') userRefreshToken = this.props.users[0].refreshToken;
+    { 
+      console.log(this.props.users[0]);
+      if(this.props.users[0].name!=='' && this.props.tracks.length<1){
+      this.getTopTracks();
+    } //this is bullshit because it won't really work once i need to do refresh tokens
+  }
     return (
       <div className="App">
         <TokenManager 
-          refreshToken = {this.props.users[0].refreshToken}
-          editUser = {this.props.editUser}
+          getNewAccessTokens = {() =>this.getNewAccessTokens()}
         />
         
 
@@ -174,5 +217,5 @@ class App extends Component {
   }
 }
 
-//connect(mapStateToProps, mapDispatchToProps)(TokenManager);
 export default connect(mapStateToProps, mapDispatchToProps)(App);
+
