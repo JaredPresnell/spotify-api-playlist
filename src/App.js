@@ -46,6 +46,7 @@ const mapStateToProps = state => (
 class App extends Component {
   getTopTracks(){
     var totalTracks = [];
+    console.log(this.props);
     const options = {limit: this.props.settings.count, offset: 0, time_range: this.props.settings.timeFrame};
     this.props.users.forEach((user, index) => {
       spotifyApi.setAccessToken(user.accessToken);
@@ -55,9 +56,9 @@ class App extends Component {
           if(index+1===this.props.users.length)
             this.props.setTracks(totalTracks);
             //need to do something about duplicates probably  
-        })
-
-    }) 
+        });
+    console.log('getting top tracks');
+    }); 
   }
   pushTracks(){
     var tracks = this.props.tracks;
@@ -67,7 +68,12 @@ class App extends Component {
     })
     console.log(trackUris);
     
-    var accessTokenJared = this.props.users[0].accessToken;
+    //var accessTokenJared = this.props.users[0].accessToken;
+    var accessTokenJared = '';
+    this.props.users.forEach((user) => {
+      if(user.spotifyId == "waytoofatdolphin")
+        accessTokenJared = user.accessToken;
+    });
     spotifyApi.setAccessToken(accessTokenJared);
     console.log(spotifyApi.getAccessToken());
     spotifyApi.addTracksToPlaylist(playlist_id, trackUris, {})
@@ -77,9 +83,6 @@ class App extends Component {
   }
 
   getNewAccessTokens(){
-    // function editUser(name, accessToken, refreshToken){
-    //   this.props.editUser(name, accessToken, refreshToken);
-    // }
     this.props.users.forEach((user) =>{
       var accessToken ='';
       var refreshToken = user.refreshToken;
@@ -133,13 +136,8 @@ class App extends Component {
     if(!this.isEmpty(params)){
       spotifyApi.setAccessToken(params.access_token);
       spotifyApi.getMe().then((response) => {
-        console.log(params.refresh_token);
         this.props.addUser(response.id, response.display_name, params.access_token, params.refresh_token);
-
-        //console.log(response.display_name);
-        //console.log(response.id);
-        //so i need to check if the user is in the database
-        //i should probably deal with mongo schema at some point
+        console.log("adding user from this.handleSignIn()");
       });
     }
   }
@@ -173,13 +171,8 @@ class App extends Component {
   constructor() {
     super();
   }
-  render() {  
-    { 
-      console.log(this.props.users[0]);
-      if(this.props.users[0].name!=='' && this.props.tracks.length<1){
-      this.getTopTracks();
-    } //this is bullshit because it won't really work once i need to do refresh tokens
-  }
+  render() {
+    {console.log('app.js render'); console.log(this.props);}  
     return (
       <div className="App">
         <TokenManager 
@@ -211,6 +204,8 @@ class App extends Component {
           users = {this.props.users}
           addUser = {this.props.addUser}
           hashParams = {this.props.hashParams}
+          getTopTracks = {() => this.getTopTracks()}
+          tracks = {this.props.tracks}
         />
       </div>
     );

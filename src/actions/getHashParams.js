@@ -13,10 +13,9 @@ export const getHashParams = () => dispatch => {
   	}
   	var params = getParams();
   	//i could get the params, then i could call to spotify, then i could dispatch to users
-  	console.log('PARAMS');
-  	console.log(params);
-  	if(isEmpty(params))
-  		console.log('params not null');
+  	if(!isEmpty(params))
+  		//and here we will be doing something undoubtedly
+  		// aka call to spotify, get the username, dispatch that bitch
 	dispatch({
 		type: 'GET_HASH_PARAMS',
 		payload: params
