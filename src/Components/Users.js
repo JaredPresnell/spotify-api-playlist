@@ -6,8 +6,6 @@ export default class Users extends Component {
   }
   render(){
     if(this.props.users[0].name!=='' && this.props.tracks.length<1){
-      console.log('Users.js render');
-      console.log(this.props);
       this.props.getTopTracks();
     }
     return (

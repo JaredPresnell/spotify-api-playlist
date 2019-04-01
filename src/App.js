@@ -20,6 +20,8 @@ import TopSongs from './Components/TopSongs';
 import Users from './Components/Users';
 import TokenManager from './Components/TokenManager';
 
+import Promise from 'bluebird';
+
 const spotifyApi = new Spotify();
 const playlist_id = '674PhRT9Knua4GdUkgzTel';
 
@@ -46,7 +48,6 @@ const mapStateToProps = state => (
 class App extends Component {
   getTopTracks(){
     var totalTracks = [];
-    console.log(this.props);
     const options = {limit: this.props.settings.count, offset: 0, time_range: this.props.settings.timeFrame};
     this.props.users.forEach((user, index) => {
       spotifyApi.setAccessToken(user.accessToken);
@@ -57,7 +58,6 @@ class App extends Component {
             this.props.setTracks(totalTracks);
             //need to do something about duplicates probably  
         });
-    console.log('getting top tracks');
     }); 
   }
   pushTracks(){
@@ -137,7 +137,6 @@ class App extends Component {
       spotifyApi.setAccessToken(params.access_token);
       spotifyApi.getMe().then((response) => {
         this.props.addUser(response.id, response.display_name, params.access_token, params.refresh_token);
-        console.log("adding user from this.handleSignIn()");
       });
     }
   }
@@ -148,31 +147,25 @@ class App extends Component {
     }
     return true;
   }
-  componentDidMount(){
+  componentDidMount(){ 
+    var handleSignInPromise = Promise.promisify(this.handleSignIn);
     this.props.getHashParams();
     this.handleSignIn();
+    // handleSignInPromise().then((res) =>{
+    //   console.log(res);
+    // });
     //get users
     //refresh all tokens
     //get tracks
     this.props.getUsers();
     if(this.props.users[0].name !== '')
         this.getTopTracks();
-    //i have no idea what im doing and im sad about it
-    // var promise1 = new Promise((resolve, reject) => {
-    //   //console.log(this.props.getUsers());
-    //   resolve(this.props.getUsers()); 
-    // });
-    // promise1.then((users) => {
-    //   console.log('users within componentDidMount');
-    //   console.log(users);
-    //   this.getTopTracks();
-    // });    
+     
   }
   constructor() {
     super();
   }
   render() {
-    {console.log('app.js render'); console.log(this.props);}  
     return (
       <div className="App">
         <TokenManager 

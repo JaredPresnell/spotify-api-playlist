@@ -4,7 +4,15 @@ var mongoose = require('mongoose');
 
 const MongoClient = require('mongodb').MongoClient;
 const mongo = require('mongodb');
+var Schema = mongoose.Schema;
 
+var userSchema = new Schema({
+	spotifyId: {type: String, required: true, unique: true},
+	name: {type: String, required: true},
+	accessToken: {type: String, required: true}, 
+	refreshToken: {type: String, required: true}
+});
+var User = mongoose.model('User', userSchema);
 //there's some weird shit with mongo where it used to return a db and now it returns client, after v3.0
 const uri = "mongodb://localhost:27017/spotify";
 
@@ -54,7 +62,7 @@ app.post('/api/edituser',(req, res) => {
 
 });
 app.post('/api/adduser', (req, res) => {
-  	console.log(req.body);
+  	//console.log(req.body);
 	mongo.connect(uri, function(err, client){
 		var db = client.db('spotify');
 		var cursor = db.collection('users').find();	
@@ -72,31 +80,34 @@ app.post('/api/adduser', (req, res) => {
 				});
 			}
 			else{
-				collection.insertOne({spotifyId: req.body.spotifyId, name: req.body.name, accessToken: req.body.accessToken, refreshToken: req.body.refreshToken})
-				.then(() => {
-					cursor = db.collection('users').find();
-					var resultsArray =[];
-					cursor.forEach(function(doc, err){
-						resultsArray.push(doc);
-					}, function(){
-						res.json(resultsArray);
-						client.close();
-					});
-				
+				console.log('attempting to save user');
+				let user = new User({
+					spotifyId: req.body.spotifyId,
+					name: req.body.name,
+					accessToken: req.body.accessToken, 
+					refreshToken: req.body.refreshToken
 				});
-				// , function(error, response){
-				// 	if(error){
-				// 		console.log('ERROR' + ERROR);
-				// 	}
-				// 	else {
-				// 		cursor = db.collection('users').find();
-				// 		cursor.forEach(function(doc, err){
-				// 			resultArray.push(doc);
-				// 		}, function(){
-				// 			res.json(resultArray);
-				// 			client.close();
-				// 		});
-				// 	}
+				console.log(user);
+				collection.insertOne(user); //this is definitely wrong but user.save isnt working
+				// user.save()
+				// 	.then(doc => {
+				// 		console.log('this is the doc from user.save');
+				// 		console.log(doc);
+				// 	})
+				// 	.catch(err => {
+				// 		console.log(err);
+				// 	});	
+				// collection.insertOne({spotifyId: req.body.spotifyId, name: req.body.name, accessToken: req.body.accessToken, refreshToken: req.body.refreshToken})
+				// .then(() => {
+				// 	cursor = db.collection('users').find();
+				// 	var resultsArray =[];
+				// 	cursor.forEach(function(doc, err){
+				// 		resultsArray.push(doc);
+				// 	}, function(){
+				// 		res.json(resultsArray);
+				// 		client.close();
+				// 	});
+				
 				// });
 			}
 		})
