@@ -7,6 +7,7 @@ export const getUsers = () => dispatch => {
     return res.json();
   })
   .then(function(resJSON){
+    console.log(resJSON);
     dispatch({
     	type: 'GET_USERS',
     	payload: resJSON

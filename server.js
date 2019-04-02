@@ -1,11 +1,9 @@
 const express = require('express');  
 const bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-
 const MongoClient = require('mongodb').MongoClient;
 const mongo = require('mongodb');
 var Schema = mongoose.Schema;
-
 var userSchema = new Schema({
 	spotifyId: {type: String, required: true, unique: true},
 	name: {type: String, required: true},
@@ -13,115 +11,160 @@ var userSchema = new Schema({
 	refreshToken: {type: String, required: true}
 });
 var User = mongoose.model('User', userSchema);
-//there's some weird shit with mongo where it used to return a db and now it returns client, after v3.0
 const uri = "mongodb://localhost:27017/spotify";
-
 
 const app = express();
 const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));		
 
+const fetch = require('node-fetch');
+var Bluebird = require('bluebird');
+fetch.Promise = Bluebird;
+
 app.get('/api/getusers', (req, res) => {
-	var resultArray = [];
-	mongo.connect(uri, function(err, client){
-		var db = client.db('spotify');
-		var cursor = db.collection('users').find();
-		cursor.forEach(function(doc, err){
-			resultArray.push(doc);
-		}, function(){
-			client.close();
-			//console.log(resultArray);
-			if(resultArray.length ==0)
-				resultArray = [{spotifyId: '', name: '', accessToken: '', refreshToken: ''}];
-			res.json(resultArray);
-		});
-	});	
+	mongoose.connect(uri, {useNewUrlParser: true});
+	var db = mongoose.connection;
+  	db.on('error', console.error.bind(console, 'connection error:'));
+  	db.once('open', function(){
+  		var usersArray = [];
+  		User.find({}, function(err, users){
+  			usersArray = users;
+  			res.json(usersArray);
+  		});
+  		
+  	});
 });
 
 app.post('/api/edituser',(req, res) => {
-	mongo.connect(uri, function(err, client){
-		var db = client.db('spotify');
-		var collection = db.collection('users');
-		collection.updateOne(
-			{refreshToken: req.body.refreshToken},
-			{'$set': {'accessToken':req.body.accessToken}}, 
-			(err, item) => {console.log(item)
-		});
-		//this doesnt really make any sense but i was getting json errors and whatever
-		var updatedUsers = [];
-		var updatedUsersCursor = collection.find({refreshToken: req.body.refreshToken});
-		updatedUsersCursor.forEach(function(doc,err){
-			updatedUsers.push(doc);
-		}, function(){
-			client.close();
-			res.json(updatedUsers[0]);
+	mongoose.connect(uri, {useNewUrlParser: true});
+	var db = mongoose.connection;
+  	db.on('error', console.error.bind(console, 'connection error:'));
+  	let query = {refreshToken: req.body.refreshToken};
+	db.once('open', function() {
+		User.findOneAndUpdate(query, {accessToken: req.body.accessToken}, {upsert: false, new: true}, 
+			function(err,doc){	
+				if(err) return res.send(500, {error: err});
+				return res.send(doc);
 		});
 	});
 	
 
 });
 app.post('/api/adduser', (req, res) => {
-  	//console.log(req.body);
-	mongo.connect(uri, function(err, client){
-		var db = client.db('spotify');
-		var cursor = db.collection('users').find();	
-		var collection = db.collection('users');
-		collection.find({spotifyId: req.body.spotifyId}).count()
-		.then((count) =>{
-			if(count>0){
-				console.log('duplicate user found');
-				var resultsArray = [];
-				cursor.forEach(function(doc, err){
-					resultsArray.push(doc);
-				}, function(){
-					res.json(resultsArray);
-					client.close();
-				});
-			}
-			else{
-				console.log('attempting to save user');
-				let user = new User({
-					spotifyId: req.body.spotifyId,
-					name: req.body.name,
-					accessToken: req.body.accessToken, 
-					refreshToken: req.body.refreshToken
-				});
-				console.log(user);
-				collection.insertOne(user); //this is definitely wrong but user.save isnt working
-				// user.save()
-				// 	.then(doc => {
-				// 		console.log('this is the doc from user.save');
-				// 		console.log(doc);
-				// 	})
-				// 	.catch(err => {
-				// 		console.log(err);
-				// 	});	
-				// collection.insertOne({spotifyId: req.body.spotifyId, name: req.body.name, accessToken: req.body.accessToken, refreshToken: req.body.refreshToken})
-				// .then(() => {
-				// 	cursor = db.collection('users').find();
-				// 	var resultsArray =[];
-				// 	cursor.forEach(function(doc, err){
-				// 		resultsArray.push(doc);
-				// 	}, function(){
-				// 		res.json(resultsArray);
-				// 		client.close();
-				// 	});
-				
-				// });
-			}
-		})
-		
-		
-	});	
+  	mongoose.connect(uri, {useNewUrlParser: true});
+  	var db = mongoose.connection;
+  	db.on('error', console.error.bind(console, 'connection error:'));
+	db.once('open', function() {
+	  	let user = new User({
+			spotifyId: req.body.spotifyId,
+			name: req.body.name,
+			accessToken: req.body.accessToken, 
+			refreshToken: req.body.refreshToken
+		});
+		user.save((err, user) => {
+			if (err) return console.error(err);
+			console.log(user.name + 'saved to database');
+		});
+	});
 });
 
-app.post('/api/testing', (req, res) => {
-  console.log(req.body);
-  res.send(
-    'I received your POST request. This is what you sent me: ' + req.body.post,
-  );
-});
+app.listen(port, () => {
+	console.log('Listening on port ${port}');
+	mongoose.connect(uri, {useNewUrlParser: true});
+  	var db = mongoose.connection;
+  	var BluebirdTest = Bluebird.promisify(User.find);
+
+	//FetchUsers();
 
 
-app.listen(port, () => console.log('Listening on port ${port}'));
+	db.once('open', function(){
+		User.find({}).then((users)=>{
+			users.forEach((user, index) =>{
+				var refreshToken = user.refreshToken;
+				fetch('http://localhost:8888/refresh_token?refresh_token=' + refreshToken, {
+	        		method: 'GET',
+		      	})  
+		 	 	.then(function(res){
+		      		return res.json();
+		      	})
+		      	.then(function(resJSON){
+		      		let accessToken = resJSON.access_token;
+	      		  	let query = {refreshToken: refreshToken};
+		      		User.findOneAndUpdate(query, {accessToken: accessToken}, {upsert: false, new: true}, 
+						function(err,doc){	
+							if(err) console.log(err);
+							console.log('user token updated');
+							//console.log(doc);
+					})
+					.then(()=>{
+						console.log('promise of findOneAndUpdate');
+						//I could get songs from here, and push to tracks[], but Im not sure how a callback of a foreach loop interacts with async spotify calls and whatnot
+					});
+		      	});
+			});
+		});
+	});
+	
+	
+
+  	//SIGN IN CODEFLOW:
+  	//
+  	//user signs in in react -> spotify oauth
+  	//redirect to react -> gethashparams -> posts to node -> calls DoEverything()
+  	function FetchUsers(){
+		var usersArray = [];
+
+  		mongoose.connect(uri, {useNewUrlParser: true});
+  		var db = mongoose.connection;
+  		db.on('error', console.error.bind(console,'connection error'));
+  		console.log('inside FetchUsers()');
+  		db.once('open', function(){
+  			User.find({}, function(err, users){
+  				usersArray = users;
+  				//console.log(usersArray);
+  				//get new access tokens
+  				usersArray.forEach((user, index) =>{
+  					var refreshToken = user.refreshToken;
+					fetch('http://localhost:8888/refresh_token?refresh_token=' + refreshToken, {
+		        		method: 'GET',
+			      	})  
+			 	 	.then(function(res){
+			      		return res.json();
+			      	})
+			      	.then(function(resJSON){
+			      		let accessToken = resJSON.access_token;
+		      		  	let query = {refreshToken: refreshToken};
+			      		User.findOneAndUpdate(query, {accessToken: accessToken}, {upsert: false, new: true}, 
+							function(err,doc){	
+								if(err) console.log(err);
+								//console.log('user token updated');
+								//console.log(doc);
+								return "hello there@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2";
+						});
+			      	});
+  				});
+  				
+  			});
+  			
+  		});
+  		
+  		
+  	}
+  	// DoEverything():
+  		//get users from database
+	  	//refresh all tokens
+	  	//get songs for everyone from spotify (or not depending on how you want to do it)
+	  	//compile songs into one array, check for duplicates
+	  	//push songs to spotify
+
+
+  		//this shit is for later 	
+  		// probably need to actually fairly frequently run an interval, once every hour or something, and then check if it is the right day of the week or whatever
+ 	//  function intervalFunc() {
+	//   console.log('Cant stop me now!');
+	// }
+
+	// setInterval(intervalFunc, 3000);
+});	
+

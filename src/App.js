@@ -71,7 +71,7 @@ class App extends Component {
     //var accessTokenJared = this.props.users[0].accessToken;
     var accessTokenJared = '';
     this.props.users.forEach((user) => {
-      if(user.spotifyId == "waytoofatdolphin")
+      if(user.spotifyId === "waytoofatdolphin")
         accessTokenJared = user.accessToken;
     });
     spotifyApi.setAccessToken(accessTokenJared);
@@ -84,16 +84,15 @@ class App extends Component {
 
   getNewAccessTokens(){
     this.props.users.forEach((user) =>{
-      var accessToken ='';
       var refreshToken = user.refreshToken;
-      var name = '';
+      console.log('old access token: ' + user.accessToken);
       fetch('http://localhost:8888/refresh_token?refresh_token=' + refreshToken, {
         method: 'GET',
       })  
       .then(function(res){
-        return res.json ();
+        return res.json();
       })
-      .then(function(response){    
+      .then(function(response){  
         fetch('/api/edituser',{
           method: 'POST',
           body: JSON.stringify({
@@ -109,15 +108,12 @@ class App extends Component {
         })
         .then(function(resJSON){
           console.log(resJSON);
-          name = resJSON.name;
-          console.log('name ' +name);
-          accessToken = resJSON.accessToken;
-          refreshToken = resJSON.refreshToken;
-          //editUser(resJSON.name, resJSON.accessToken, resJSON.refreshToken);
+          //for some reason this response is the old access token not the new one
 
          // this.editUserFunc();
          // this.props.editUser(resJSON.name, resJSON.accessToken, resJSON.refreshToken);
           // some redux shit that i dont understand: tldr, how do i get my redux here isntead of passing it
+          //maybe you do something with local state?      
         });
       });
     });
@@ -148,7 +144,7 @@ class App extends Component {
     return true;
   }
   componentDidMount(){ 
-    var handleSignInPromise = Promise.promisify(this.handleSignIn);
+    // var handleSignInPromise = Promise.promisify(this.handleSignIn);
     this.props.getHashParams();
     this.handleSignIn();
     // handleSignInPromise().then((res) =>{
@@ -161,9 +157,6 @@ class App extends Component {
     if(this.props.users[0].name !== '')
         this.getTopTracks();
      
-  }
-  constructor() {
-    super();
   }
   render() {
     return (
