@@ -28,8 +28,8 @@
     "eject": "react-scripts eject",
     "client": "cd src && npm start",
     "server": "node server.js",
-    "devsave": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\" \"cd .. && cd spotify_auth && cd authorization_code && node app.js\"",
-    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"cd .. && cd spotify_auth && cd authorization_code && node app.js\""
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\" \"cd .. && cd spotify_auth && cd authorization_code && node app.js\"",
+    "devsave": "concurrently --kill-others-on-fail \"npm run server\" \"cd .. && cd spotify_auth && cd authorization_code && node app.js\""
   },
   "proxy": "http://localhost:5000/"
 }

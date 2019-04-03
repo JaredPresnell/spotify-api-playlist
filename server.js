@@ -32,7 +32,10 @@ app.get('/api/getusers', (req, res) => {
   	db.once('open', function(){
   		var usersArray = [];
   		User.find({}, function(err, users){
-  			usersArray = users;
+  			if(users.length==0){
+  				usersArray = [{spotifyId: '', name:'',accessToken:'',refreshToken:''}]; 
+  			}
+  			else usersArray = users;
   			res.json(usersArray);
   		});
   		
@@ -65,23 +68,50 @@ app.post('/api/adduser', (req, res) => {
 			accessToken: req.body.accessToken, 
 			refreshToken: req.body.refreshToken
 		});
-		user.save((err, user) => {
-			if (err) return console.error(err);
-			console.log(user.name + 'saved to database');
+		User.find({spotifyId: req.body.spotifyId}).then((res)=>{
+			if(res.length==0){
+				user.save((err, user) => {
+					if (err) return console.error(err);
+					console.log(user.name + 'saved to database');
+					doEverything();
+				});	
+			}
+			
 		});
 	});
 });
 
 app.listen(port, () => {
 	console.log('Listening on port ${port}');
+	//DoEverything();
+
+	
+	function updateTimer(){
+		var d = new Date();
+		var day = d.getDay();
+		var minutes = d.getMinutes();
+		var hours = d.getHours();
+		console.log('day: ' + day);
+		console.log("hours: " + hours);
+		console.log('minutes: ' + minutes);
+		if(day==5 && hours==0){
+			doEverything();
+		}
+	}
+	setInterval(updateTimer, 60*30*1000);
+	//friday morning maybe? not sure
+	//do everything might need like a conditional really so its not just calling the db all the time?
+  	
+
+	
+});	
+function doEverything(){
+	//DoEverything gets users from database, refreshes all tokens, fetches tracks for all users, updates the playlist with tracks 
+	// It would be more readable to make each individual promise/map function into its own function
 	mongoose.connect(uri, {useNewUrlParser: true});
-  	var db = mongoose.connection;
-  	var BluebirdTest = Bluebird.promisify(User.find);
-
-	//FetchUsers();
-
-
-	db.once('open', function(){
+	var db = mongoose.connection;
+	db.once('open', function(){	
+		var jaredAccessToken = '';
 		User.find({}).then((users)=>{
 			var tokensPromiseArray = users.map((user) =>{
 				var refreshToken = user.refreshToken;
@@ -104,6 +134,12 @@ app.listen(port, () => {
 				Promise.all(updateDBPromises).then((users)=>{
 					console.log('database updated');
 					var totalTracks = [];
+					users.forEach((user)=>{
+						if(user.spotifyId==="waytoofatdolphin")
+						{
+							jaredAccessToken = user.accessToken;
+						}
+					});
 					var spotifyPromises = users.map((user)=>{
 						spotifyApi.setAccessToken(user.accessToken);
 						const options = {limit: 5, offset: 0, time_range: 'short_term'};
@@ -116,77 +152,24 @@ app.listen(port, () => {
 					Promise.all(spotifyPromises).then((songs)=>{
 						console.log('spotify done');
 						var totalTracks = [];
+						var trackUris = [];
 						songs.forEach((userSongs)=>{
 							userSongs.body.items.forEach((item)=>{
+								trackUris.push(item.uri);
 								totalTracks.push(item.name);
 							});
 						});
 						console.log(totalTracks);	
+						const playlist_id = '674PhRT9Knua4GdUkgzTel';
+						spotifyApi.setAccessToken(jaredAccessToken);
+						spotifyApi.replaceTracksInPlaylist(playlist_id, trackUris)
+						.then((res)=> {
+							console.log(res);
+						});
+
 					});
 				});
 			});
 		});
-	});
-	
-	
-
-  	//SIGN IN CODEFLOW:
-  	//
-  	//user signs in in react -> spotify oauth
-  	//redirect to react -> gethashparams -> posts to node -> calls DoEverything()
-  	function FetchUsers(){
-		var usersArray = [];
-
-  		mongoose.connect(uri, {useNewUrlParser: true});
-  		var db = mongoose.connection;
-  		db.on('error', console.error.bind(console,'connection error'));
-  		console.log('inside FetchUsers()');
-  		db.once('open', function(){
-  			User.find({}, function(err, users){
-  				usersArray = users;
-  				//console.log(usersArray);
-  				//get new access tokens
-  				usersArray.forEach((user, index) =>{
-  					var refreshToken = user.refreshToken;
-					fetch('http://localhost:8888/refresh_token?refresh_token=' + refreshToken, {
-		        		method: 'GET',
-			      	})  
-			 	 	.then(function(res){
-			      		return res.json();
-			      	})
-			      	.then(function(resJSON){
-			      		let accessToken = resJSON.access_token;
-		      		  	let query = {refreshToken: refreshToken};
-			      		User.findOneAndUpdate(query, {accessToken: accessToken}, {upsert: false, new: true}, 
-							function(err,doc){	
-								if(err) console.log(err);
-								//console.log('user token updated');
-								//console.log(doc);
-								return "hello there@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2";
-						});
-			      	});
-  				});
-  				
-  			});
-  			
-  		});
-  		
-  		
-  	}
-  	// DoEverything():
-  		//get users from database
-	  	//refresh all tokens
-	  	//get songs for everyone from spotify (or not depending on how you want to do it)
-	  	//compile songs into one array, check for duplicates
-	  	//push songs to spotify
-
-
-  		//this shit is for later 	
-  		// probably need to actually fairly frequently run an interval, once every hour or something, and then check if it is the right day of the week or whatever
- 	//  function intervalFunc() {
-	//   console.log('Cant stop me now!');
-	// }
-
-	// setInterval(intervalFunc, 3000);
-});	
-
+	});		
+}	
