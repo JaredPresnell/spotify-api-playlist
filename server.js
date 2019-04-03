@@ -92,17 +92,6 @@ app.listen(port, () => {
 		 	 	.then(function(res){
 		      		return res.json();
 		      	});
-		    //   	.then(function(resJSON){
-		    //   		let accessToken = resJSON.access_token;
-	     //  		  	let query = {refreshToken: refreshToken};
-	     //  		  	//return findoneandupdate as a promise 
-	     //  		  	let promise = User.findOneAndUpdate(query, {accessToken: accessToken}, {upsert: false, new: true}, (err, doc) => {
-	     //  		  		return doc;
-	     //  		  	});	
-	     //  		  	console.log('heres the promise');
-	     //  		  	console.log(promise.exec());
-	     //  		  	return promise.exec();
-      // 		  	});
 			});
 			Promise.all(tokensPromiseArray).then((tokens)=>{
 				console.log('fetch tokens finished');
@@ -119,14 +108,8 @@ app.listen(port, () => {
 						spotifyApi.setAccessToken(user.accessToken);
 						const options = {limit: 5, offset: 0, time_range: 'short_term'};
 						console.log('calling spotify');
-						var tracks = spotifyApi.getMyTopTracks(options).then((data)=>{
-							return data.items;
-						});
 						return spotifyApi.getMyTopTracks(options).then((data) => {
 							return data;
-						  //totalTracks = totalTracks.concat(response.items);
-						  // if(index+1===this.props.users.length)
-						  //   this.props.setTracks(totalTracks);
 						});
 							
 					});
@@ -142,32 +125,6 @@ app.listen(port, () => {
 					});
 				});
 			});
-			
-			
-			// users.forEach((user, index) =>{
-			// 	var refreshToken = user.refreshToken;
-			// 	fetch('http://localhost:8888/refresh_token?refresh_token=' + refreshToken, {
-	  //       		method: 'GET',
-		 //      	})  
-		 // 	 	.then(function(res){
-		 //      		return res.json();
-		 //      	})
-		 //      	.then(function(resJSON){
-		 //      		let accessToken = resJSON.access_token;
-	  //     		  	let query = {refreshToken: refreshToken};
-		 //      		User.findOneAndUpdate(query, {accessToken: accessToken}, {upsert: false, new: true}, 
-			// 			function(err,doc){	
-			// 				if(err) console.log(err);
-			// 				console.log('user token updated');
-			// 				//console.log(doc);
-			// 		})
-			// 		.then(()=>{
-			// 			console.log('promise of findOneAndUpdate');
-			// 			//I could get songs from here, and push to tracks[], but Im not sure how a callback of a foreach loop interacts with async spotify calls and whatnot
-			// 		});
-		 //      	});
-			// });
-			
 		});
 	});
 	
