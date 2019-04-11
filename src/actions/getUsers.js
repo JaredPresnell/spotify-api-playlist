@@ -2,7 +2,8 @@
   src/actions/getUsers.js
 */
 export const getUsers = () => dispatch => {
-	fetch('/api/getusers')
+	//fetch('/api/getusers')
+    fetch('/api/getusers')
   .then(function(res){
     return res.json();
   })

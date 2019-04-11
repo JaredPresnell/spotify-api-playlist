@@ -26,7 +26,9 @@ var Bluebird = require('bluebird');
 fetch.Promise = Bluebird;
 
 app.get('/api/getusers', (req, res) => {
-	mongoose.connect(uri, {useNewUrlParser: true});
+    //res.json([{name:'test', spotifyId:'dsafdsfa', refresh_token: 'testrefresh', access_token:"testaccess"}]);
+        
+    mongoose.connect(uri, {useNewUrlParser: true});
 	var db = mongoose.connection;
   	db.on('error', console.error.bind(console, 'connection error:'));
   	db.once('open', function(){
@@ -81,10 +83,13 @@ app.post('/api/adduser', (req, res) => {
 	});
 });
 
+app.get('/api/doeverything', (req, res) =>{
+   doEverything();
+   res.send('doing everything');
+});
 app.listen(port, () => {
-	console.log('Listening on port ${port}');
+	console.log("Listening on port "+port);
 	//DoEverything();
-
 	
 	function updateTimer(){
 		var d = new Date();
@@ -116,7 +121,7 @@ function doEverything(){
 			var tokensPromiseArray = users.map((user) =>{
 				var refreshToken = user.refreshToken;
 				console.log('user id: ' + user.spotifyId);
-				return fetch('http://localhost:8888/refresh_token?refresh_token=' + refreshToken, {
+				return fetch('/spotify/refresh_token?refresh_token=' + refreshToken, {
 	        		method: 'GET',
 		      	})
 		 	 	.then(function(res){
@@ -143,7 +148,7 @@ function doEverything(){
 					var spotifyPromises = users.map((user)=>{
 						spotifyApi.setAccessToken(user.accessToken);
 						const options = {limit: 5, offset: 0, time_range: 'short_term'};
-						console.log('calling spotify');
+					//	console.log('calling spotify');
 						return spotifyApi.getMyTopTracks(options).then((data) => {
 							return data;
 						});
@@ -159,7 +164,7 @@ function doEverything(){
 								totalTracks.push(item.name);
 							});
 						});
-						console.log(totalTracks);	
+						//console.log(totalTracks);	
 						const playlist_id = '674PhRT9Knua4GdUkgzTel';
 						spotifyApi.setAccessToken(jaredAccessToken);
 						spotifyApi.replaceTracksInPlaylist(playlist_id, trackUris)

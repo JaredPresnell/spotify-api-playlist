@@ -1,6 +1,6 @@
 export const getNewToken = (refreshToken) => dispatch => {
   //console.log('refreshToken');
-  fetch('http://localhost:8888/refresh_token?refresh_token=' + refreshToken, {
+  fetch('/spotify/refresh_token?refresh_token=' + refreshToken, {
     method: 'GET',
   })  
   .then(function(res){

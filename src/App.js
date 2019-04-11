@@ -66,7 +66,7 @@ class App extends Component {
     tracks.forEach((track) => {
       trackUris.push(track.uri);
     })
-    console.log(trackUris);
+    //console.log(trackUris);
     
     //var accessTokenJared = this.props.users[0].accessToken;
     var accessTokenJared = '';
@@ -75,18 +75,21 @@ class App extends Component {
         accessTokenJared = user.accessToken;
     });
     spotifyApi.setAccessToken(accessTokenJared);
-    console.log(spotifyApi.getAccessToken());
-    spotifyApi.addTracksToPlaylist(playlist_id, trackUris, {})
-    .then((res) =>{
-      console.log(res);
-    });
+    //console.log(spotifyApi.getAccessToken());
+    spotifyApi.replaceTracksInPlaylist(playlist_id, trackUris, {});
+    //spotifyApi.addTracksToPlaylist(playlist_id, trackUris, {})
+    //.then((res) =>{
+    //  console.log(res);
+    //});
   }
 
   getNewAccessTokens(){
     this.props.users.forEach((user) =>{
       var refreshToken = user.refreshToken;
       console.log('old access token: ' + user.accessToken);
-      fetch('http://localhost:8888/refresh_token?refresh_token=' + refreshToken, {
+      //fetch('https://localhost:8888/refresh_token?refresh_token=' + refreshToken, {
+        fetch('/spotify/refresh_token?refresh_token=' + refreshToken, {
+
         method: 'GET',
       })  
       .then(function(res){
@@ -118,7 +121,14 @@ class App extends Component {
       });
     });
   }
-  handleSignIn(){
+  handleSignIn(accessToken, refreshToken){
+    spotifyApi.setAccessToken(accessToken);
+    spotifyApi.getMe().then((response) => {
+        this.props.addUser(response.id, response.display_name, accessToken, refreshToken);
+    });
+  }
+  handleLoad(){
+    //const _this = this;
     function getParams() {
       var hashParams = {};
       var e, r = /([^&;=]+)=?([^&;]*)/g,
@@ -127,14 +137,24 @@ class App extends Component {
          hashParams[e[1]] = decodeURIComponent(e[2]);
       }
       return hashParams;
-    }
+    }   
     var params = getParams();
     if(!this.isEmpty(params)){
-      spotifyApi.setAccessToken(params.access_token);
-      spotifyApi.getMe().then((response) => {
-        this.props.addUser(response.id, response.display_name, params.access_token, params.refresh_token);
-      });
+        this.handleSignIn(params.access_token);    
     }
+    else {
+        const thisSelf = this;
+        //else getUsers() -> refreshTokens() -> getTrackS()
+        //this.props.getUsers(); //maybe i make this into a promise so i can .then() it 
+            //or maybe better than that i can just call the already made shit to doEverything();
+        fetch('/api/doeverything', {method: "GET"})
+        .then((res)=>{
+            console.log("inside fetch do everyhing");
+            //thisSelf.getUsers(); // for some reason this doesnt work
+           // this.getTracks();
+        });
+    }
+   
   }
   isEmpty(obj) {
     for(var key in obj) {
@@ -144,15 +164,15 @@ class App extends Component {
     return true;
   }
   componentDidMount(){ 
-    // var handleSignInPromise = Promise.promisify(this.handleSignIn);
-    this.props.getHashParams();
-    this.handleSignIn();
-    // handleSignInPromise().then((res) =>{
-    //   console.log(res);
-    // });
+    // this.props.getHashParams();
+    //this.handleSignIn();
+    //handleLoad() -> if(params()) then handleSignIn(), else getUsers() -> refreshTokens() -> getTrackS()
     //get users
     //refresh all tokens
     //get tracks
+    
+    this.handleLoad();
+    
     this.props.getUsers();
     if(this.props.users[0].name !== '')
         this.getTopTracks();
@@ -167,7 +187,7 @@ class App extends Component {
         
 
         <h1>Spotify Playlist API</h1>
-        <a href="http://localhost:8888">
+        <a href="/spotify/login">
           <button>Log in to Spotify!</button>
         </a>
         <pre>
