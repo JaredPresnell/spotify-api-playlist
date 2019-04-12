@@ -27,7 +27,7 @@
     "react-scripts": "1.1.1"
   },
   "scripts": {
-    "startsave": "react-scripts start",
+    "start": "react-scripts start",
     "startserver": "babel-node server.js",
     "startreact": "babel-node src/App.js",
     "build": "react-scripts build",

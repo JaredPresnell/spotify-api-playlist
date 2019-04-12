@@ -1,4 +1,4 @@
-/* 
+/* 	
   src/reducers/tracksReducer.js
 */
 export default (state =[], action) => {

@@ -7,9 +7,6 @@ import './App.css';
 
 import { setTracks }        from './actions/setTracks';
 import { getHashParams }    from './actions/getHashParams';
-import { incrementCount }   from './actions/incrementCount';
-import { decrementCount }   from './actions/decrementCount';
-import { toggleTimeFrame }  from './actions/toggleTimeFrame';
 import { getUsers }         from './actions/getUsers';
 import { addUser }          from './actions/addUser';
 import { getNewToken }      from './actions/getNewToken'; //this is obsolete
@@ -18,19 +15,32 @@ import { editUser }         from './actions/editUser';
 // COMPONENTS
 import TopSongs from './Components/TopSongs'; 
 import Users from './Components/Users';
-import TokenManager from './Components/TokenManager';
 
 import Promise from 'bluebird';
 
 const spotifyApi = new Spotify();
 const playlist_id = '674PhRT9Knua4GdUkgzTel';
 
+const spotifyAuthPath = getSpotifyAuthPath();
+const spotifyLoginPath = getSpotifyLoginPath();
+
+function getSpotifyAuthPath(){
+  if(window.location.host =="localhost:3000"){
+    return "http://localhost:8888/"
+  }
+  else return "/spotify/"
+}
+function getSpotifyLoginPath(){
+  if(window.location.host === "localhost:3000"){
+    return "http://localhost:8888"
+  }
+  else return "/spotify/login"
+}
+
+
 const mapDispatchToProps = dispatch => ({
   setTracks: (tracks) => dispatch(setTracks(tracks)),
   getHashParams: () => dispatch(getHashParams()),
-  incrementCount: () => dispatch(incrementCount()),
-  decrementCount: () => dispatch(decrementCount()),
-  toggleTimeFrame: () => dispatch(toggleTimeFrame()),
   getUsers:        () => dispatch(getUsers()),
   addUser:         (id, name,accessToken, refreshToken) => dispatch(addUser(id,name,accessToken, refreshToken)),
   getNewToken:    (refreshToken) => dispatch(getNewToken(refreshToken)),
@@ -46,49 +56,13 @@ const mapStateToProps = state => (
 
 
 class App extends Component {
-  getTopTracks(){
-    var totalTracks = [];
-    const options = {limit: this.props.settings.count, offset: 0, time_range: this.props.settings.timeFrame};
-    this.props.users.forEach((user, index) => {
-      spotifyApi.setAccessToken(user.accessToken);
-      spotifyApi.getMyTopTracks(options)
-        .then((response) => {
-          totalTracks = totalTracks.concat(response.items);
-          if(index+1===this.props.users.length)
-            this.props.setTracks(totalTracks);
-            //need to do something about duplicates probably  
-        });
-    }); 
-  }
-  pushTracks(){
-    var tracks = this.props.tracks;
-    var trackUris = [];
-    tracks.forEach((track) => {
-      trackUris.push(track.uri);
-    })
-    //console.log(trackUris);
-    
-    //var accessTokenJared = this.props.users[0].accessToken;
-    var accessTokenJared = '';
-    this.props.users.forEach((user) => {
-      if(user.spotifyId === "waytoofatdolphin")
-        accessTokenJared = user.accessToken;
-    });
-    spotifyApi.setAccessToken(accessTokenJared);
-    //console.log(spotifyApi.getAccessToken());
-    spotifyApi.replaceTracksInPlaylist(playlist_id, trackUris, {});
-    //spotifyApi.addTracksToPlaylist(playlist_id, trackUris, {})
-    //.then((res) =>{
-    //  console.log(res);
-    //});
-  }
-
   getNewAccessTokens(){
     this.props.users.forEach((user) =>{
       var refreshToken = user.refreshToken;
       console.log('old access token: ' + user.accessToken);
       //fetch('https://localhost:8888/refresh_token?refresh_token=' + refreshToken, {
-        fetch('/spotify/refresh_token?refresh_token=' + refreshToken, {
+      //fetch('/spotify/refresh_token?refresh_token=' + refreshToken, {
+      fetch(spotifyAuthPath + "refresh_token?refresh_token=" + refreshToken, {
 
         method: 'GET',
       })  
@@ -111,20 +85,25 @@ class App extends Component {
         })
         .then(function(resJSON){
           console.log(resJSON);
-          //for some reason this response is the old access token not the new one
-
-         // this.editUserFunc();
-         // this.props.editUser(resJSON.name, resJSON.accessToken, resJSON.refreshToken);
-          // some redux shit that i dont understand: tldr, how do i get my redux here isntead of passing it
-          //maybe you do something with local state?      
         });
       });
     });
   }
   handleSignIn(accessToken, refreshToken){
+    console.log('handling my dude');
     spotifyApi.setAccessToken(accessToken);
     spotifyApi.getMe().then((response) => {
-        this.props.addUser(response.id, response.display_name, accessToken, refreshToken);
+        //this.props.addUser(response.id, response.display_name, accessToken, refreshToken);
+        //console.log(this.props.addUser(response.id, response.display_name, accessToken, refreshToken));
+        this.props.addUser(response.id, response.display_name, accessToken, refreshToken)
+        .then(()=>{
+          //and then set tracks
+          // and then get tracks
+          //fuck
+          console.log('async redux LEGEND');
+          this.getTracks();
+          //this one is fine
+        });
     });
   }
   handleLoad(){
@@ -139,22 +118,36 @@ class App extends Component {
       return hashParams;
     }   
     var params = getParams();
+    console.log(params);
     if(!this.isEmpty(params)){
-        this.handleSignIn(params.access_token);    
+        console.log('now we should be handling sign in');
+        this.handleSignIn(params.access_token, params.refresh_token);    
     }
     else {
-        const thisSelf = this;
-        //else getUsers() -> refreshTokens() -> getTrackS()
-        //this.props.getUsers(); //maybe i make this into a promise so i can .then() it 
-            //or maybe better than that i can just call the already made shit to doEverything();
-        fetch('/api/doeverything', {method: "GET"})
-        .then((res)=>{
-            console.log("inside fetch do everyhing");
-            //thisSelf.getUsers(); // for some reason this doesnt work
-           // this.getTracks();
-        });
+      //basically i just need to get the data eg loadData();
+      this.getTracks();
+      //this one is fine too
+      // fetch('/api/loadData', {method: "GET"})
+      // .then((res)=> {
+      //   console.log(res);
+      // });
+        // fetch('/api/doeverything', {method: "GET"})
+        // .then((res)=>{
+        //     console.log("inside fetch do everyhing");
+        // });
     }
    
+  }
+  getTracks(){
+    fetch('/api/gettracks', {method: "GET"})
+    .then((res)=>{
+      return res.json();
+    })
+    .then((resJSON)=>{
+      console.log(resJSON);
+      this.props.setTracks(resJSON.tracks);
+      //** set last updated 
+    });
   }
   isEmpty(obj) {
     for(var key in obj) {
@@ -164,53 +157,35 @@ class App extends Component {
     return true;
   }
   componentDidMount(){ 
-    // this.props.getHashParams();
-    //this.handleSignIn();
-    //handleLoad() -> if(params()) then handleSignIn(), else getUsers() -> refreshTokens() -> getTrackS()
-    //get users
-    //refresh all tokens
-    //get tracks
-    
+    // really all this should do is ping the database for the tracks
+        // theres really no reason to go through all the steps every time    
     this.handleLoad();
     
     this.props.getUsers();
     if(this.props.users[0].name !== '')
-        this.getTopTracks();
+        //this.getTopTracks();
+        this.getTracks(); //fine
      
   }
   render() {
     return (
       <div className="App">
-        <TokenManager 
-          getNewAccessTokens = {() =>this.getNewAccessTokens()}
-        />
-        
 
         <h1>Spotify Playlist API</h1>
-        <a href="/spotify/login">
+        {/*<a href="/spotify/login">*/}
+        <a href= {spotifyLoginPath}>
           <button>Log in to Spotify!</button>
         </a>
-        <pre>
-          {
-            JSON.stringify(this.props)
-          }
-        </pre>
-
         <TopSongs 
-          getTopTracks = {() => this.getTopTracks()}
           tracks = {this.props.tracks}
           settings = {this.props.settings}
-          incrementCount = {this.props.incrementCount}
-          decrementCount = {this.props.decrementCount}
-          toggleTimeFrame = {this.props.toggleTimeFrame }
-          pushTracks = {() => this.pushTracks()}
         />
         <Users
           getUsers = {this.props.getUsers}
           users = {this.props.users}
           addUser = {this.props.addUser}
           hashParams = {this.props.hashParams}
-          getTopTracks = {() => this.getTopTracks()}
+          getTracks = {() => this.getTracks()}
           tracks = {this.props.tracks}
         />
       </div>

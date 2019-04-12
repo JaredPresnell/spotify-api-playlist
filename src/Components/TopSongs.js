@@ -1,28 +1,17 @@
-
 import React, { Component } from 'react';
 export default class TopSongs extends Component {
   render(){
     return (
       <div>
-        <button onClick = {() =>this.props.getTopTracks()}>
-          Get Top Tracks
-        </button>
-        <button onClick ={() => this.props.incrementCount()}>
-          Increase Song Count
-        </button>
-        <button onClick = {()=> this.props.decrementCount()}>
-          Decrease Song Count
-        </button>
-        <button onClick = {() => this.props.toggleTimeFrame()}>
-          Toggle Time Frame
-        </button>
-        <h4>Current Song Count: {this.props.settings.count}</h4>
+        <h1>Current Playlist</h1>
+        <p>This is the current playlist, with the names of the song artists and the spotify users who contributed each song</p>
         <ul>
           {
-            this.props.tracks.map((item, i) => <li key={i}>{item.name}, {item.artists[0].name}</li> )
+            //console.log(this.props.tracks)
+            this.props.tracks.map((item, i) => <li key={i}>{item.name}, {item.artists[0].name}, {item.user}</li> )
           }   
         </ul>
-        <button onClick = {() => this.props.pushTracks(this.props.tracks)}>SEND TRACKS TO SPOTIFY!</button>
+        {/*<button onClick = {()=> this.props.getTracks()}>Get Playlist</button>*/}
       </div>
     )
   } 
