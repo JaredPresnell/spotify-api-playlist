@@ -167,7 +167,14 @@ class App extends Component {
         this.getTracks(); //fine
      
   }
+  doEverything(){
+    fetch('/api/doeverything', {method: "GET"})
+    .then((res) =>{
+        console.log(res);
+    });
+  }
   render() {
+    console.log(spotifyAuthPath);
     return (
       <div className="App">
 
@@ -176,6 +183,7 @@ class App extends Component {
         <a href= {spotifyLoginPath}>
           <button>Log in to Spotify!</button>
         </a>
+       <button onClick = {()=>this.doEverything()}>do everything</button>
         <TopSongs 
           tracks = {this.props.tracks}
           settings = {this.props.settings}
