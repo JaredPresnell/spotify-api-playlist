@@ -6,6 +6,7 @@ import Spotify from 'spotify-web-api-js';
 import './App.css';
 
 import { setTracks }        from './actions/setTracks';
+import { setLastUpdated }   from './actions/setLastUpdated';
 import { getHashParams }    from './actions/getHashParams';
 import { getUsers }         from './actions/getUsers';
 import { addUser }          from './actions/addUser';
@@ -26,13 +27,13 @@ const spotifyLoginPath = getSpotifyLoginPath();
 
 function getSpotifyAuthPath(){
   if(window.location.host =="localhost:3000"){
-    return "http://localhost:8888/"
+    return "http://localhost:8888/spotify/"
   }
   else return "/spotify/"
 }
 function getSpotifyLoginPath(){
   if(window.location.host === "localhost:3000"){
-    return "http://localhost:8888"
+    return "http://localhost:8888/spotify/login"
   }
   else return "/spotify/login"
 }
@@ -40,6 +41,7 @@ function getSpotifyLoginPath(){
 
 const mapDispatchToProps = dispatch => ({
   setTracks: (tracks) => dispatch(setTracks(tracks)),
+  setLastUpdated: (lastUpdated) => dispatch(setLastUpdated(lastUpdated)),
   getHashParams: () => dispatch(getHashParams()),
   getUsers:        () => dispatch(getUsers()),
   addUser:         (id, name,accessToken, refreshToken) => dispatch(addUser(id,name,accessToken, refreshToken)),
@@ -93,16 +95,11 @@ class App extends Component {
     console.log('handling my dude');
     spotifyApi.setAccessToken(accessToken);
     spotifyApi.getMe().then((response) => {
-        //this.props.addUser(response.id, response.display_name, accessToken, refreshToken);
-        //console.log(this.props.addUser(response.id, response.display_name, accessToken, refreshToken));
         this.props.addUser(response.id, response.display_name, accessToken, refreshToken)
-        .then(()=>{
-          //and then set tracks
-          // and then get tracks
-          //fuck
-          console.log('async redux LEGEND');
+        .then((res)=>{
+          console.log('async inside adduser.then()');
+          console.log(res);
           this.getTracks();
-          //this one is fine
         });
     });
   }
@@ -144,9 +141,8 @@ class App extends Component {
       return res.json();
     })
     .then((resJSON)=>{
-      console.log(resJSON);
+      this.props.setLastUpdated(resJSON.lastUpdated);
       this.props.setTracks(resJSON.tracks);
-      //** set last updated 
     });
   }
   isEmpty(obj) {
@@ -167,26 +163,26 @@ class App extends Component {
         this.getTracks(); //fine
      
   }
-  doEverything(){
-    fetch('/api/doeverything', {method: "GET"})
-    .then((res) =>{
-        console.log(res);
-    });
-  }
+  // doEverything(){
+  //   fetch('/api/doeverything', {method: "GET"})
+  //   .then((res) =>{
+  //       console.log(res);
+  //   });
+  // }
   render() {
-    console.log(spotifyAuthPath);
+    //console.log(spotifyAuthPath);
     return (
       <div className="App">
 
         <h1>Spotify Playlist API</h1>
-        {/*<a href="/spotify/login">*/}
         <a href= {spotifyLoginPath}>
           <button>Log in to Spotify!</button>
         </a>
-       <button onClick = {()=>this.doEverything()}>do everything</button>
+       {/*<button onClick = {()=>this.doEverything()}>do everything</button>*/}
         <TopSongs 
           tracks = {this.props.tracks}
           settings = {this.props.settings}
+          lastUpdated = {this.props.lastUpdated}
         />
         <Users
           getUsers = {this.props.getUsers}

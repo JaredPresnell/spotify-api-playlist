@@ -5,6 +5,7 @@ export default class TopSongs extends Component {
       <div>
         <h1>Current Playlist</h1>
         <p>This is the current playlist, with the names of the song artists and the spotify users who contributed each song</p>
+        <h4>Last updated: {this.props.lastUpdated}</h4>
         <ul>
           {
             //console.log(this.props.tracks)
