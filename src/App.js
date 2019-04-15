@@ -123,15 +123,6 @@ class App extends Component {
     else {
       //basically i just need to get the data eg loadData();
       this.getTracks();
-      //this one is fine too
-      // fetch('/api/loadData', {method: "GET"})
-      // .then((res)=> {
-      //   console.log(res);
-      // });
-        // fetch('/api/doeverything', {method: "GET"})
-        // .then((res)=>{
-        //     console.log("inside fetch do everyhing");
-        // });
     }
    
   }
@@ -163,12 +154,12 @@ class App extends Component {
         this.getTracks(); //fine
      
   }
-  // doEverything(){
-  //   fetch('/api/doeverything', {method: "GET"})
-  //   .then((res) =>{
-  //       console.log(res);
-  //   });
-  // }
+  doEverything(){
+    fetch('/api/doeverything', {method: "GET"})
+    .then((res) =>{
+        console.log(res);
+    });
+  }
   render() {
     //console.log(spotifyAuthPath);
     return (
@@ -178,7 +169,7 @@ class App extends Component {
         <a href= {spotifyLoginPath}>
           <button>Log in to Spotify!</button>
         </a>
-       {/*<button onClick = {()=>this.doEverything()}>do everything</button>*/}
+            {/*<button onClick = {()=>this.doEverything()}>do everything</button>*/}
         <TopSongs 
           tracks = {this.props.tracks}
           settings = {this.props.settings}
