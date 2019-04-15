@@ -222,27 +222,25 @@ function updateTracks(spotifyData, jaredAccessToken){
 	});
 }
 function doEverything(){
+	// in order to use this function, you must be connected to the mongo database (i think)
 	// gets users, refreshes all access tokens, saves tracks to the database and to spotify
 	// returns updated tracks list
 
-	// mongoose.connect(uri, {useNewUrlParser: true});
-	// var db = mongoose.connection;
-	//db.once('open', ()=> {
-		console.log('inside do everything');
-        return getUsers().then((tokensPromiseArray)=>{
-			return Promise.all(tokensPromiseArray).then((tokensArray)=>{
-				return Promise.all(updateTokens(tokensArray)).then((updatedUsersArray)=>{
-					var spotifyDataObject = getTracksFromSpotify(updatedUsersArray);
-					var jaredAccessToken = spotifyDataObject.jaredAccessToken;
-					var spotifyPromises = spotifyDataObject.spotifyPromises;
-					return Promise.all(spotifyPromises)	
-					.then((spotifyData) =>{
-						return updateTracks(spotifyData, jaredAccessToken);
-					});	
-				});
+	
+	console.log('inside do everything');
+    return getUsers().then((tokensPromiseArray)=>{
+		return Promise.all(tokensPromiseArray).then((tokensArray)=>{
+			return Promise.all(updateTokens(tokensArray)).then((updatedUsersArray)=>{
+				var spotifyDataObject = getTracksFromSpotify(updatedUsersArray);
+				var jaredAccessToken = spotifyDataObject.jaredAccessToken;
+				var spotifyPromises = spotifyDataObject.spotifyPromises;
+				return Promise.all(spotifyPromises)	
+				.then((spotifyData) =>{
+					return updateTracks(spotifyData, jaredAccessToken);
+				});	
 			});
 		});
-	//});
+	});
 }	
 
 module.exports = {

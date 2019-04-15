@@ -92,13 +92,13 @@ class App extends Component {
     });
   }
   handleSignIn(accessToken, refreshToken){
-    console.log('handling my dude');
+    //console.log('handling my dude');
     spotifyApi.setAccessToken(accessToken);
     spotifyApi.getMe().then((response) => {
         this.props.addUser(response.id, response.display_name, accessToken, refreshToken)
         .then((res)=>{
-          console.log('async inside adduser.then()');
-          console.log(res);
+          //console.log('async inside adduser.then()');
+          //console.log(res);
           this.getTracks();
         });
     });
@@ -121,7 +121,6 @@ class App extends Component {
         this.handleSignIn(params.access_token, params.refresh_token);    
     }
     else {
-      //basically i just need to get the data eg loadData();
       this.getTracks();
     }
    
@@ -144,15 +143,7 @@ class App extends Component {
     return true;
   }
   componentDidMount(){ 
-    // really all this should do is ping the database for the tracks
-        // theres really no reason to go through all the steps every time    
-    this.handleLoad();
-    
-    this.props.getUsers();
-    if(this.props.users[0].name !== '')
-        //this.getTopTracks();
-        this.getTracks(); //fine
-     
+    this.handleLoad();     
   }
   doEverything(){
     fetch('/api/doeverything', {method: "GET"})
