@@ -29,13 +29,13 @@ function getSpotifyAuthPath(){
   if(window.location.host =="localhost:3000"){
     return "http://localhost:8888/spotify/"
   }
-  else return "/spotify/"
+  else return "/spotifyauth/"
 }
 function getSpotifyLoginPath(){
   if(window.location.host === "localhost:3000"){
     return "http://localhost:8888/spotify/login"
   }
-  else return "/spotify/login"
+  else return "/spotifyauth/login"
 }
 
 
