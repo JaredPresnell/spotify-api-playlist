@@ -98,7 +98,7 @@ class App extends Component {
         this.props.addUser(response.id, response.display_name, accessToken, refreshToken)
         .then((res)=>{
           //console.log('async inside adduser.then()');
-          //console.log(res);
+          //console.log(res);   
           this.getTracks();
         });
     });
@@ -155,7 +155,15 @@ class App extends Component {
     //console.log(spotifyAuthPath);
     return (
       <div className="App">
-
+      <a href="https://jaredpresnell.me">
+        <svg className="logo_sidebar" xmlns="http://www.w3.org/2000/svg" width="1.1in" height="1.1in" viewBox="100 100 310 310">
+          <path id="logo_path" strokeLinecap="round" strokeLinejoin="round" fill="none" stroke="black" strokeWidth="6" d="M 106.00,155.00
+                 C 106.00,155.00 401.00,151.00 401.00,151.00
+                   401.00,151.00 260.00,251.00 260.00,251.00M 273.00,164.00
+                 C 273.00,164.00 197.00,388.00 197.00,388.00
+                   197.00,388.00 129.00,308.00 129.00,308.00"></path>
+        </svg>
+      </a>
         <h1 className="title">Friends Feed</h1>
             {/*<button onClick = {()=>this.doEverything()}>do everything</button>*/}
         <p className="description"><strong className="hello">Hello!</strong> and welcome to Friends Feed, a playlist for finding new music and keeping up with your friends. And maybe discovering your pal who you thought had great music taste is secretly into Nicki Minaj. Just kidding... hopefully.</p>

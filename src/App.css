@@ -1,10 +1,51 @@
+@import url(http://fonts.googleapis.com/css?family=Raleway);
+* {
+  font-family: "Raleway", sans-serif;
+}
+
 .App {
   text-align: center;
 }
 
 .App-logo {
-  //animation: App-logo-spin infinite 20s linear;
   height: 80px;
+  border: 2px solid red;
+}
+
+.logo_sidebar {
+  position: absolute;
+  left: 105px;
+  top: 0px;
+  -webkit-transition: all 1000ms ease;
+  -moz-transition: all 1000ms ease;
+  -ms-transition: all 1000ms ease;
+  -o-transition: all 1000ms ease;
+  transition: all 1000ms ease;
+  transform: scale(1);
+}
+.logo_sidebar svg {
+  -webkit-transition: all 1000ms ease;
+  -moz-transition: all 1000ms ease;
+  -ms-transition: all 1000ms ease;
+  -o-transition: all 1000ms ease;
+  transition: all 1000ms ease;
+  transform: scale(1);
+}
+.logo_sidebar:focus, .logo_sidebar:active, .logo_sidebar:hover {
+  -webkit-transition: filter 1000ms ease;
+  -moz-transition: filter 1000ms ease;
+  -ms-transition: filter 1000ms ease;
+  -o-transition: filter 1000ms ease;
+  transition: filter 1000ms ease;
+  filter: drop-shadow(0px 0px 4px #5ab9ea);
+}
+.logo_sidebar:hover svg {
+  -webkit-transition: all 1000ms ease;
+  -moz-transition: all 1000ms ease;
+  -ms-transition: all 1000ms ease;
+  -o-transition: all 1000ms ease;
+  transition: all 1000ms ease;
+  transform: scale(1.05);
 }
 
 .App-header {
@@ -23,57 +64,78 @@
 }
 
 @keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.title {
+  font-size: 5em;
+  margin-bottom: 20px;
 }
 
-.title{
-  font-size:5em;
-  margin-bottom:20px;
-}
-.hello{
-  font-size:1.5em;
-} 
-.container{
-  display:flex;
-  justify-content: center;
-
+.hello {
+  font-size: 1.5em;
 }
 
-.flex-item{
-  flex: 0 1 auto;
-  align-self: center;
-  margin-left:10px;
-  margin-right:10px;
-}
-
-.song_item{
-  width: 400px;
-  padding-right:50px;
-}
-.description{
+.description {
   margin-left: 20%;
   margin-right: 20%;
   text-align: justify;
 }
 
-.login_button{
-  padding: 25px;
+.login_button {
+  font-family: "Raleway", sans-serif;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  padding-left: 40px;
+  padding-right: 40px;
   font-size: 3em;
-  margin-top:20px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  background-color: #1DB954;
+  border: none;
+  border-radius: 100px;
+}
+.login_button:hover {
+  filter: drop-shadow(0px 0px 4px #1DB954);
 }
 
 /************/
 /* playlist */
 /************/
-
-.playlist_container{
-  margin-top:50px;
+.playlist_container {
+  margin-top: 50px;
   background: -webkit-linear-gradient(-45deg, #234474 0%, #234474 20%, #3b8da8 20%, #3b8da8 100%) !important;
-
+  padding-bottom: 50px;
 }
 
-.playlist_title{
+.playlist_title {
   padding-top: 15px;
-
 }
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.flex-item {
+  flex: 0 1 auto;
+  align-self: center;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.song_item {
+  width: 400px;
+  padding-right: 50px;
+  text-align: left;
+}
+
+.dividerClass {
+  margin-top: 5px;
+}
+
+/*# sourceMappingURL=App.css.map */
