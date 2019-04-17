@@ -40,7 +40,7 @@ export default class TopSongs extends Component {
                   <div className="flex-item song_item">
                     {item.name} by {this.mapArtists(item.artists)}
                   </div>
-                  <div className="flex-item">
+                  <div className="flex-item spotify_user">
                     {item.user}
                   </div>
                 </div>
