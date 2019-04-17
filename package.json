@@ -37,7 +37,7 @@
     "eject": "react-scripts eject",
     "client": "cd src && npm start",
     "server": "node server.js",
-    "dev": "concurrently --kill-others-on-fail \"cd .. && cd spotify_backend && node server.js\" \"npm run start\" \"cd .. && cd spotify_backend && cd authorization_code && node app.js\""
+    "dev": "concurrently --kill-others-on-fail \"cd .. && cd spotify_backend && node server.js\" \"npm run start\" \"cd .. && cd spotify_backend && cd authorization_code && node app.js\" \"cd src/scss && sass --watch App.scss ../App.css\""
   },
   "proxy": "http://localhost:5000/"
 }
