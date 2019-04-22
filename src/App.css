@@ -23,6 +23,11 @@
   transition: all 1000ms ease;
   transform: scale(1);
 }
+@media (max-width: 599px) {
+  .logo_sidebar {
+    display: none;
+  }
+}
 .logo_sidebar svg {
   -webkit-transition: all 1000ms ease;
   -moz-transition: all 1000ms ease;
@@ -144,12 +149,26 @@
   align-items: flex-start;
   background-color: rgba(0, 0, 0, 0.1);
 }
+@media (max-width: 599px) {
+  .playlist_area_container {
+    flex-direction: column;
+    margin-left: 0%;
+    margin-right: 0%;
+    padding-left: 3%;
+    padding-right: 3%;
+  }
+}
 
 .web_player_container {
   text-align: left;
   width: 50%;
   margin: auto;
   text-align: center;
+}
+@media (max-width: 599px) {
+  .web_player_container {
+    width: 100%;
+  }
 }
 
 .web_player_playlist {
@@ -162,6 +181,11 @@
   margin-left: auto;
   margin-right: auto;
   padding-top: 15px;
+}
+@media (max-width: 599px) {
+  .playlist_description_area {
+    width: 100%;
+  }
 }
 
 .description {
@@ -190,11 +214,24 @@
   align-items: flex-start;
   background-color: rgba(0, 0, 0, 0.1);
 }
+@media (max-width: 599px) {
+  .playlist_items_container {
+    margin-left: 0%;
+    margin-right: 0%;
+    padding-left: 3%;
+    padding-right: 3%;
+  }
+}
 
 .track_iframes {
   width: 70%;
   margin: auto;
   text-align: center;
+}
+@media (max-width: 599px) {
+  .track_iframes ul {
+    padding-left: 0px;
+  }
 }
 
 .user_names {
