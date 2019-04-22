@@ -126,6 +126,7 @@ class App extends Component {
    
   }
   getTracks(){
+    // **need to send uri data with tracks
     fetch('/api/gettracks', {method: "GET"})
     .then((res)=>{
       return res.json();
@@ -165,9 +166,12 @@ class App extends Component {
         </svg>
       </a>
         <h1 className="title">Friends Feed</h1>
-            {/*<button onClick = {()=>this.doEverything()}>do everything</button>*/}
+        {/*<button onClick = {()=>this.doEverything()}>do everything</button>*/}
         <p className="description"><strong className="hello">Hello!</strong> and welcome to Friends Feed, a playlist for finding new music and keeping up with your friends. And maybe discovering your pal who you thought had great music taste is secretly into Nicki Minaj. Just kidding... hopefully.</p>
-        <p className="description">Once you log into Spotify, this app will automatically add your top 5 most played songs from the last month to the playlist. The playlist auto updates every Friday, so be sure to check back every week. You can take a listen <a className="playlist_link" href="https://open.spotify.com/user/waytoofatdolphin/playlist/674PhRT9Knua4GdUkgzTel?si=BvVhI-voTCugcTvfPT4vgw">here</a>.</p>
+        <p className="description">Once you log into Spotify, this app will automatically add your top 5 most played songs from the last month to the playlist. The playlist auto updates every Friday, so be sure to check back every week. Scroll down to check out the current collection of songs, and to follow the playlist on Spotify.</p>
+
+
+         {/*} You can take a listen <a className="playlist_link" href="https://open.spotify.com/user/waytoofatdolphin/playlist/674PhRT9Knua4GdUkgzTel?si=BvVhI-voTCugcTvfPT4vgw">here</a>, or scroll down to .</p>*/}
         <a href= {spotifyLoginPath}>
           <button className="login_button">Sign in and Start Listening!</button>
         </a>
