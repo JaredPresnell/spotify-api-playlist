@@ -37,9 +37,7 @@ $spotifyGreen: #1DB954;
 
 .logo_sidebar{
   //margin:auto;
-  @include for-phone-only{
-    display:none;
-  }
+  
   position:absolute;
   left:105px;
   top:0px;
@@ -60,6 +58,13 @@ $spotifyGreen: #1DB954;
       @include animate(all,1000ms);
       transform: scale(1.05);
     }
+  }
+
+  @include for-phone-only {
+    display:none;
+  }
+  @include for-tablet-portrait-up {
+    left: 25px;
   }
 }
 
@@ -169,6 +174,13 @@ $spotifyGreen: #1DB954;
     padding-left:3%;
     padding-right: 3%;
   }
+  @include for-tablet-portrait-up {
+    margin-left:3%;
+    margin-right:3%;
+    padding-left:3%;
+    padding-right:3%;
+
+  }
 }
 
 .web_player_container{
@@ -233,15 +245,24 @@ $spotifyGreen: #1DB954;
     padding-left:3%;
     padding-right:3%;
   }
+  @include for-tablet-portrait-up {
+    margin-left:3%;
+    margin-right: 3%;
+    padding-left:3%;
+    padding-right:3%;
+  }
 }
 
 .track_iframes{
-  width:70%; //** MOBILE
+  width:70%; 
   margin: auto;
   text-align: center;
   ul{
     @include for-phone-only {
       padding-left: 0px;
+    }
+    @include for-tablet-portrait-up {
+      padding-left:0px;
     }
   }
 }

@@ -23,11 +23,6 @@
   transition: all 1000ms ease;
   transform: scale(1);
 }
-@media (max-width: 599px) {
-  .logo_sidebar {
-    display: none;
-  }
-}
 .logo_sidebar svg {
   -webkit-transition: all 1000ms ease;
   -moz-transition: all 1000ms ease;
@@ -51,6 +46,16 @@
   -o-transition: all 1000ms ease;
   transition: all 1000ms ease;
   transform: scale(1.05);
+}
+@media (max-width: 599px) {
+  .logo_sidebar {
+    display: none;
+  }
+}
+@media (min-width: 600px) {
+  .logo_sidebar {
+    left: 25px;
+  }
 }
 
 .App-header {
@@ -158,6 +163,14 @@
     padding-right: 3%;
   }
 }
+@media (min-width: 600px) {
+  .playlist_area_container {
+    margin-left: 3%;
+    margin-right: 3%;
+    padding-left: 3%;
+    padding-right: 3%;
+  }
+}
 
 .web_player_container {
   text-align: left;
@@ -222,6 +235,14 @@
     padding-right: 3%;
   }
 }
+@media (min-width: 600px) {
+  .playlist_items_container {
+    margin-left: 3%;
+    margin-right: 3%;
+    padding-left: 3%;
+    padding-right: 3%;
+  }
+}
 
 .track_iframes {
   width: 70%;
@@ -229,6 +250,11 @@
   text-align: center;
 }
 @media (max-width: 599px) {
+  .track_iframes ul {
+    padding-left: 0px;
+  }
+}
+@media (min-width: 600px) {
   .track_iframes ul {
     padding-left: 0px;
   }
