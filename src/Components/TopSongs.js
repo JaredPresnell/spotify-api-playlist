@@ -42,7 +42,11 @@ export default class TopSongs extends Component {
                 this.props.tracks.map((item, i) => {
                   var addDividerClass="container ";
                   var lastUser = i>1 ?  this.props.tracks[i-1].user : item.user; 
-                  let uri = item.trackUri.split(":");
+                  let uri = "";
+                  console.log("trackUri");
+                  console.log(item.trackUri);
+                  if(typeof item.trackUri!== 'undefined')
+                      uri = item.trackUri.split(":");
                   let iframeSrc ="https://open.spotify.com/embed/" + uri[1] + "/" + uri[2];
                   if(lastUser !== item.user){
                     addDividerClass += "dividerClass";
@@ -74,7 +78,9 @@ export default class TopSongs extends Component {
               this.props.tracks.map((item, i) => {
                 var addDividerClass="container ";
                 var lastUser = i>1 ?  this.props.tracks[i-1].user : item.user; 
-                let uri = item.trackUri.split(":");
+                let uri ='';
+                if(typeof item.trackUri!== 'undefined')
+                      uri = item.trackUri.split(":");
                 let iframeSrc ="https://open.spotify.com/embed/" + uri[1] + "/" + uri[2];
                 if(lastUser !== item.user){
                   addDividerClass += "dividerClass";
