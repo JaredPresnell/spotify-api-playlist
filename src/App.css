@@ -14,7 +14,6 @@
 
 .logo_sidebar {
   position: absolute;
-  left: 105px;
   top: 0px;
   -webkit-transition: all 1000ms ease;
   -moz-transition: all 1000ms ease;
@@ -54,7 +53,14 @@
 }
 @media (min-width: 600px) {
   .logo_sidebar {
+    display: none;
     left: 25px;
+  }
+}
+@media (min-width: 900px) {
+  .logo_sidebar {
+    display: block;
+    left: 105px;
   }
 }
 
@@ -143,10 +149,6 @@
 }
 
 .playlist_area_container {
-  margin-left: 10%;
-  margin-right: 10%;
-  padding-left: 10%;
-  padding-right: 10%;
   padding-bottom: 4%;
   margin-top: 2%;
   padding-top: 2%;
@@ -171,6 +173,14 @@
     padding-right: 3%;
   }
 }
+@media (min-width: 900px) {
+  .playlist_area_container {
+    margin-left: 5%;
+    margin-right: 5%;
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+}
 
 .web_player_container {
   text-align: left;
@@ -183,6 +193,11 @@
     width: 100%;
   }
 }
+@media (min-width: 600px) {
+  .web_player_container {
+    width: 50%;
+  }
+}
 
 .web_player_playlist {
   margin-top: 25px;
@@ -190,7 +205,6 @@
 }
 
 .playlist_description_area {
-  width: 50%;
   margin-left: auto;
   margin-right: auto;
   padding-top: 15px;
@@ -198,6 +212,11 @@
 @media (max-width: 599px) {
   .playlist_description_area {
     width: 100%;
+  }
+}
+@media (min-width: 600px) {
+  .playlist_description_area {
+    width: 50%;
   }
 }
 
@@ -218,8 +237,6 @@
 }
 
 .playlist_items_container {
-  margin-left: 10%;
-  margin-right: 10%;
   padding-bottom: 4%;
   margin-top: 5%;
   padding-top: 3%;
@@ -243,6 +260,14 @@
     padding-right: 3%;
   }
 }
+@media (min-width: 900px) {
+  .playlist_items_container {
+    margin-left: 5%;
+    margin-right: 5%;
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+}
 
 .track_iframes {
   width: 70%;
@@ -255,6 +280,11 @@
   }
 }
 @media (min-width: 600px) {
+  .track_iframes ul {
+    padding-left: 0px;
+  }
+}
+@media (min-width: 900px) {
   .track_iframes ul {
     padding-left: 0px;
   }

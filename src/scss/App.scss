@@ -39,7 +39,6 @@ $spotifyGreen: #1DB954;
   //margin:auto;
   
   position:absolute;
-  left:105px;
   top:0px;
   @include animate(all,1000ms);
   transform: scale(1);
@@ -64,7 +63,12 @@ $spotifyGreen: #1DB954;
     display:none;
   }
   @include for-tablet-portrait-up {
+    display:none;
     left: 25px;
+  }
+  @include for-tablet-landscape-up {
+    display:block;
+    left:105px;
   }
 }
 
@@ -156,11 +160,6 @@ $spotifyGreen: #1DB954;
 
 //WEB PLAYER
 .playlist_area_container{
-  
-  margin-left: 10%;
-  margin-right: 10%;
-  padding-left: 10%;
-  padding-right:10%;
   padding-bottom: 4%;
   margin-top: 2%;
   padding-top: 2%;
@@ -179,7 +178,12 @@ $spotifyGreen: #1DB954;
     margin-right:3%;
     padding-left:3%;
     padding-right:3%;
-
+  }
+  @include for-tablet-landscape-up {
+    margin-left: 5%;
+    margin-right: 5%;
+    padding-left: 5%;
+    padding-right:5%;
   }
 }
 
@@ -187,12 +191,15 @@ $spotifyGreen: #1DB954;
   text-align:left;
   // margin-left: 5%;
   // margin-right:5%;
-  width:50%; 
+  width: 50%;
   margin: auto;
   text-align: center;
 
   @include for-phone-only {
     width:100%;
+  }
+  @include for-tablet-portrait-up {
+    width: 50%;
   }
 }
 
@@ -202,13 +209,14 @@ $spotifyGreen: #1DB954;
 }
 
 .playlist_description_area{
-  width:50%;
   margin-left: auto;
   margin-right: auto;
   padding-top:15px;
-  @include for-phone-only{
+  @include for-phone-only {
     width: 100%;
-    // change how the flex box works
+  }
+  @include for-tablet-portrait-up {
+    width: 50%;
   }
 }
 
@@ -230,9 +238,6 @@ $spotifyGreen: #1DB954;
 
 // PLAYLIST ITEMS //
 .playlist_items_container{
-  //margin-top:50px;
-  margin-left: 10%;
-  margin-right: 10%;
   padding-bottom: 4%;
   margin-top: 5%;
   padding-top: 3%;
@@ -251,6 +256,12 @@ $spotifyGreen: #1DB954;
     padding-left:3%;
     padding-right:3%;
   }
+  @include for-tablet-landscape-up {
+    margin-left: 5%;
+    margin-right: 5%;
+    padding-left: 5%;
+    padding-right:5%;
+  }
 }
 
 .track_iframes{
@@ -263,6 +274,9 @@ $spotifyGreen: #1DB954;
     }
     @include for-tablet-portrait-up {
       padding-left:0px;
+    }
+    @include for-tablet-landscape-up {
+      padding-left: 0px; //** ?
     }
   }
 }
