@@ -80,11 +80,6 @@ $spotifyGreen: #1DB954;
   font-size:1.5em;
 } 
 
-.description{
-  margin-left: 20%;
-  margin-right: 20%;
-  text-align: justify;
-}
 
 .login_button{
   font-family:'Raleway', sans-serif;
@@ -115,7 +110,7 @@ $spotifyGreen: #1DB954;
 
 .playlist_title{
   padding-top: 15px;
-
+  font-size:3em;
 }
 
 .container{
@@ -126,7 +121,6 @@ $spotifyGreen: #1DB954;
 
 .flex-item{
   flex: 0 1 auto;
-  align-self: center;
   margin-left:10px;
   margin-right:10px;
 
@@ -139,11 +133,104 @@ $spotifyGreen: #1DB954;
 }
 
 .dividerClass{
-  //box-shadow: 0px -1px 0px 0px $scheme3;
-  //border-top: 1px solid $scheme3;
   margin-top: 5px;
+}
+
+
+
+//WEB PLAYER
+.playlist_area_container{
+  margin-left: 10%;
+  margin-right: 10%;
+  padding-left: 10%;
+  padding-right:10%;
+  padding-bottom: 4%;
+  margin-top: 2%;
+  padding-top: 2%;
+  display:flex;
+  align-items: flex-start;
+  background-color: rgba(0,0,0, 0.1);
+}
+
+.web_player_container{
+  text-align:left;
+  // margin-left: 5%;
+  // margin-right:5%;
+  width:50%; //** MOBILE
+  margin: auto;
+  text-align: center;
+}
+
+.web_player_playlist{
+  margin-top:25px;
+  width:100%;
+}
+
+.playlist_description_area{
+  width:50%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top:15px;
+  }
+
+.description{
+  margin-left: 10%;
+  margin-right: 10%;
+  text-align: justify;
+  margin-bottom:25px;
+  font-weight: 550;
+}
+
+.description_divider{
+  margin-top:25px;
+  margin-bottom:21px;
+  border: 1px solid rgba(35, 68, 116, 0.25);
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+// PLAYLIST ITEMS //
+.playlist_items_container{
+  //margin-top:50px;
+  margin-left: 10%;
+  margin-right: 10%;
+  padding-bottom: 4%;
+  margin-top: 5%;
+  padding-top: 3%;
+  display:flex;
+  align-items: flex-start;
+  background-color: rgba(0,0,0, 0.1);
+}
+
+.track_iframes{
+  width:70%; //** MOBILE
+  margin: auto;
+  text-align: center;
+}
+
+.user_names{
+  width:25%; //** MOBILE
+  margin: auto;
+  margin-right:5%;
+  text-align: center;
 }
 
 .spotify_user{
     width:200px;
+    height:80px;
+    /*
+    display:flex;
+    margin: auto;
+    align-items: center;
+    */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+ 
+}
+
+.spotify_user_paragraph{
+
 }

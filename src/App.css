@@ -80,12 +80,6 @@
   font-size: 1.5em;
 }
 
-.description {
-  margin-left: 20%;
-  margin-right: 20%;
-  text-align: justify;
-}
-
 .login_button {
   font-family: "Raleway", sans-serif;
   padding-top: 25px;
@@ -114,6 +108,7 @@
 
 .playlist_title {
   padding-top: 15px;
+  font-size: 3em;
 }
 
 .container {
@@ -123,7 +118,6 @@
 
 .flex-item {
   flex: 0 1 auto;
-  align-self: center;
   margin-left: 10px;
   margin-right: 10px;
 }
@@ -138,8 +132,91 @@
   margin-top: 5px;
 }
 
+.playlist_area_container {
+  margin-left: 10%;
+  margin-right: 10%;
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-bottom: 4%;
+  margin-top: 2%;
+  padding-top: 2%;
+  display: flex;
+  align-items: flex-start;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.web_player_container {
+  text-align: left;
+  width: 50%;
+  margin: auto;
+  text-align: center;
+}
+
+.web_player_playlist {
+  margin-top: 25px;
+  width: 100%;
+}
+
+.playlist_description_area {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 15px;
+}
+
+.description {
+  margin-left: 10%;
+  margin-right: 10%;
+  text-align: justify;
+  margin-bottom: 25px;
+  font-weight: 550;
+}
+
+.description_divider {
+  margin-top: 25px;
+  margin-bottom: 21px;
+  border: 1px solid rgba(35, 68, 116, 0.25);
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+.playlist_items_container {
+  margin-left: 10%;
+  margin-right: 10%;
+  padding-bottom: 4%;
+  margin-top: 5%;
+  padding-top: 3%;
+  display: flex;
+  align-items: flex-start;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.track_iframes {
+  width: 70%;
+  margin: auto;
+  text-align: center;
+}
+
+.user_names {
+  width: 25%;
+  margin: auto;
+  margin-right: 5%;
+  text-align: center;
+}
+
 .spotify_user {
   width: 200px;
+  height: 80px;
+  /*
+  display:flex;
+  margin: auto;
+  align-items: center;
+  */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
 }
 
 /*# sourceMappingURL=App.css.map */
