@@ -43,8 +43,6 @@ export default class TopSongs extends Component {
                   var addDividerClass="container ";
                   var lastUser = i>1 ?  this.props.tracks[i-1].user : item.user; 
                   let uri = "";
-                  console.log("trackUri");
-                  console.log(item.trackUri);
                   if(typeof item.trackUri!== 'undefined')
                       uri = item.trackUri.split(":");
                   let iframeSrc ="https://open.spotify.com/embed/" + uri[1] + "/" + uri[2];
